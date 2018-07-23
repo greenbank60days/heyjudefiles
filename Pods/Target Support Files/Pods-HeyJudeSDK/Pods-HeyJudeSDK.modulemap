@@ -1,0 +1,6 @@
+framework module Pods_HeyJudeSDK {
+  umbrella header "Pods-HeyJudeSDK-umbrella.h"
+
+  export *
+  module * { export * }
+}
