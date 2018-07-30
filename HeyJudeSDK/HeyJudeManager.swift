@@ -35,7 +35,7 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     private var token: String = ""
     private var userId: Int = 0
     private var socket: SocketIOClient?
-    private var manager: SocketManager?
+    //private var manager: SocketManager?
 
     public init(environment: HeyJudeEnvironment, program: String, apiKey: String) {
 
@@ -69,15 +69,23 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     // MARK: SocketIO
 
     private func initSocket() {
-        self.manager = SocketManager(socketURL: URL(string: self.socketHost())!,
-                                     config: [.log(true),
-                                              .connectParams(["user_id": self.userId, "token": self.token]),
-                                              .path("/chat")
+
+        self.socket = SocketIOClient(socketURL: URL(string: self.socketHost())!, config: [.log(true),
+                                                                                       .connectParams(["user_id": self.userId, "token": self.token]),
+                                                                                       .path("/chat")
 
             ])
-        self.manager!.reconnects = true
-        self.manager!.forceNew = true
-        self.socket = self.manager!.socket(forNamespace: "/")
+
+
+//        self.manager = SocketManager(socketURL: URL(string: self.socketHost())!,
+//                                     config: [.log(true),
+//                                              .connectParams(["user_id": self.userId, "token": self.token]),
+//                                              .path("/chat")
+//
+//            ])
+//        self.manager!.reconnects = true
+//        self.manager!.forceNew = true
+//        self.socket = self.manager!.socket(forNamespace: "/")
         self.addHandlers()
     }
 
@@ -87,16 +95,16 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func configureSocket() {
 
-        if self.manager == nil {
-            self.initSocket()
-        }
-
-        self.manager!.setConfigs([.log(true),
-                                  .connectParams(["user_id": self.userId, "token": self.token]),
-                                  .path("/chat")
-                                ])
-
-        self.manager!.reconnect()
+//        if self.manager == nil {
+//            self.initSocket()
+//        }
+//
+//        self.manager!.setConfigs([.log(true),
+//                                  .connectParams(["user_id": self.userId, "token": self.token]),
+//                                  .path("/chat")
+//                                ])
+//
+//        self.manager!.reconnect()
 
     }
 
@@ -108,16 +116,16 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func clearSocket() {
         self.socket = nil
-        self.manager = nil
+        //self.manager = nil
     }
 
     private func addHandlers() {
 
         self.socket?.onAny { (data) in
-            if data.event == "reconnectAttempt" {
-                self.manager!.disconnect()
-                self.socket!.connect()
-            }
+//            if data.event == "reconnectAttempt" {
+//                self.manager!.disconnect()
+//                self.socket!.connect()
+//            }
         }
     }
 

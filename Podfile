@@ -6,6 +6,6 @@ target 'HeyJudeSDK' do
   use_frameworks!
 
   # Pods for HeyJudeSDK
-  pod 'Socket.IO-Client-Swift', '~> 13.1.0'
+  pod 'Socket.IO-Client-Swift', '~> 11.1.3'
 
 end
