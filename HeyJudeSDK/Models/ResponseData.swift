@@ -6,9 +6,7 @@
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
 
-import UIKit
-
-public class ResponseData: NSObject, Decodable {
+public class ResponseData: Decodable {
 
     public var data: Data?
 

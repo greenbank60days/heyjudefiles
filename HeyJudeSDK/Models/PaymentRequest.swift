@@ -5,7 +5,6 @@
 //  Created by Byron Tudhope on 2018/07/18.
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
-import UIKit
 
 public class PaymentRequest: Decodable, CustomStringConvertible {
 

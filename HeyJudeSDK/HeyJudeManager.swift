@@ -6,11 +6,9 @@
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
 
-import UIKit
 import MobileCoreServices
 import CoreLocation
 import CoreTelephony
-import Foundation
 import SocketIO
 
 public enum HeyJudeEnvironment {

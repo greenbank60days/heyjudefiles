@@ -5,8 +5,6 @@
 //  Created by Byron Tudhope on 2018/07/22.
 //
 
-import UIKit
-
 public class HeyJudeError {
 
     public var httpResponseCode: Int?

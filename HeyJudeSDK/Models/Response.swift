@@ -6,9 +6,7 @@
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
 
-import UIKit
-
-public class Response: NSObject, Decodable {
+public class Response: Decodable {
 
     public var errors: [String]?
     public var token: String?

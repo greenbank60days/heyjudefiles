@@ -6,8 +6,6 @@
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
 
-import UIKit
-
 public class FeaturedImage: Decodable, CustomStringConvertible {
 
     public var size: Int?
