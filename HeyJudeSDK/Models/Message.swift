@@ -8,6 +8,8 @@
 
 public class Message: Decodable, CustomStringConvertible {
 
+    public var description = ""
+
     public var id: Int?
     public var taskId: Int?
     public var text: String?
