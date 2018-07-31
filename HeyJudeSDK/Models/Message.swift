@@ -57,56 +57,56 @@ public class Message: Decodable, CustomStringConvertible {
         case attachmentId = "attachment_id"
     }
 
-    public var description: String {
-        var description = "\n*******Message*******\n"
-        description += "id: \(self.id!)\n"
-        if taskId != nil {
-            description += "taskId: \(self.taskId!)\n"
-        }
-        description += "fromUser: \(self.fromUser!)\n"
-        description += "fromUserString: \(self.fromUserString!)\n"
-        description += "unixTimestamp: \(self.unixTimestamp!)\n"
-        description += "type: \(self.type!)\n"
-        switch self.type {
-        case "text":
-            description += "text: \(self.text!)\n"
-        case "payment":
-            description += "amount: \(self.amount!)\n"
-            description += "currency: \(self.currency!)\n"
-            description += "paymentDescription: \(self.paymentDescription!)\n"
-            description += "supplier: \(self.supplier!)\n"
-            description += "paymentRequestId: \(self.paymentRequestId!)\n"
-            description += "status: \(self.status!)\n"
-        case "map":
-            description += "latitude: \(self.latitude!)\n"
-            description += "longitude: \(self.longitude!)\n"
-            description += "mapUrl: \(self.mapUrl!)\n"
-            description += "address: \(self.address!)\n"
-        case "vendor":
-            for vendor in self.vendors! {
-                description += "vendor: \(vendor.description)\n"
-            }
-        case "image":
-            description += "size: \(self.size!)\n"
-            description += "mime: \(self.mime!)\n"
-            description += "attachmentExtension: \(self.attachmentExtension!)\n"
-            description += "attachmentId: \(self.attachmentId!)\n"
-        case "audio":
-            description += "size: \(self.size!)\n"
-            description += "mime: \(self.mime!)\n"
-            description += "attachmentExtension: \(self.attachmentExtension!)\n"
-            description += "attachmentId: \(self.attachmentId!)\n"
-        case "document":
-            description += "size: \(self.size!)\n"
-            description += "mime: \(self.mime!)\n"
-            description += "attachmentExtension: \(self.attachmentExtension!)\n"
-            description += "attachmentId: \(self.attachmentId!)\n"
-        case "rating":
-            description += "text: \(self.text!)\n"
-        default:
-            break
-        }
-        return description
-    }
+//    public var description: String {
+//        var description = "\n*******Message*******\n"
+//        description += "id: \(self.id!)\n"
+//        if taskId != nil {
+//            description += "taskId: \(self.taskId!)\n"
+//        }
+//        description += "fromUser: \(self.fromUser!)\n"
+//        description += "fromUserString: \(self.fromUserString!)\n"
+//        description += "unixTimestamp: \(self.unixTimestamp!)\n"
+//        description += "type: \(self.type!)\n"
+//        switch self.type {
+//        case "text"?:
+//            description += "text: \(self.text!)\n"
+//        case "payment":
+//            description += "amount: \(self.amount!)\n"
+//            description += "currency: \(self.currency!)\n"
+//            description += "paymentDescription: \(self.paymentDescription!)\n"
+//            description += "supplier: \(self.supplier!)\n"
+//            description += "paymentRequestId: \(self.paymentRequestId!)\n"
+//            description += "status: \(self.status!)\n"
+//        case "map"?:
+//            description += "latitude: \(self.latitude!)\n"
+//            description += "longitude: \(self.longitude!)\n"
+//            description += "mapUrl: \(self.mapUrl!)\n"
+//            description += "address: \(self.address!)\n"
+//        case "vendor"?:
+//            for vendor in self.vendors! {
+//                description += "vendor: \(vendor.description)\n"
+//            }
+//        case "image"?:
+//            description += "size: \(self.size!)\n"
+//            description += "mime: \(self.mime!)\n"
+//            description += "attachmentExtension: \(self.attachmentExtension!)\n"
+//            description += "attachmentId: \(self.attachmentId!)\n"
+//        case "audio"?:
+//            description += "size: \(self.size!)\n"
+//            description += "mime: \(self.mime!)\n"
+//            description += "attachmentExtension: \(self.attachmentExtension!)\n"
+//            description += "attachmentId: \(self.attachmentId!)\n"
+//        case "document"?:
+//            description += "size: \(self.size!)\n"
+//            description += "mime: \(self.mime!)\n"
+//            description += "attachmentExtension: \(self.attachmentExtension!)\n"
+//            description += "attachmentId: \(self.attachmentId!)\n"
+//        case "rating"?:
+//            description += "text: \(self.text!)\n"
+//        default:
+//            break
+//        }
+//        return description
+//    }
 
 }
