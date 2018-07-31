@@ -6,9 +6,7 @@
 //  Copyright © 2018 TCT Digital. All rights reserved.
 //
 
-public class Message: Decodable, CustomStringConvertible {
-
-    public var description = ""
+public class Message: Decodable {
 
     public var id: Int?
     public var taskId: Int?

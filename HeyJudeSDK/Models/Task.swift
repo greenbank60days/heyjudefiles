@@ -32,12 +32,12 @@ public class Task: Decodable, CustomStringConvertible {
         description += "createdAt: \(self.createdAt!)\n"
         description += "status: \(self.status!)\n"
         description += "open: \(self.open!)\n"
-        if self.messages != nil {
-            description += "messages: \n"
-            for message in self.messages! {
-                description += "\(message.description)\n"
-            }
-        }
+//        if self.messages != nil {
+//            description += "messages: \n"
+//            for message in self.messages! {
+//                description += "\(message.description)\n"
+//            }
+//        }
         return description
     }
 }
