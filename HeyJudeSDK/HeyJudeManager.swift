@@ -820,15 +820,15 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func createTokenizeCardRequest(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
 
-        let urlString = "https://test.oppwa.com/v1/registrations"
+        let urlString = (self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
         let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
 
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         let bodyParameters = [
-            "authentication.userId": "8a8294185452cb3b01545c8cda4f129a",
-            "authentication.password": "W75SfPPsAA",
-            "authentication.entityId": "8a829417545c8cf101545c901a220021",
+            "authentication.userId": (self.environment == 0 ? "8a8394c25502324701550b8042872ba1" : "8a8294185452cb3b01545c8cda4f129a"),
+            "authentication.password": (self.environment == 0 ? "KR2cyz5Aj9" : "W75SfPPsAA"),
+            "authentication.entityId": (self.environment == 0 ? "8a8394c25502324701550b8182252bb4" : "8a829417545c8cf101545c901a220021"),
             "card.number": cardNumber,
             "card.holder": holder,
             "card.expiryMonth": expiryMonth,
