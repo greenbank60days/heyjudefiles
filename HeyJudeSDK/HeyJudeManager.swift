@@ -35,7 +35,6 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     private var token: String = ""
     private var userId: Int = 0
     private var socket: SocketIOClient?
-    private var manager: SocketManager?
 
     public init(environment: HeyJudeEnvironment, program: String, apiKey: String) {
 
@@ -49,8 +48,6 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             locationManager.delegate = self
             locationManager.requestLocation()
         }
-
-        self.initSocket()
 
     }
 
@@ -69,34 +66,38 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     // MARK: SocketIO
 
     private func initSocket() {
-        self.manager = SocketManager(socketURL: URL(string: self.socketHost())!,
-                                     config: [.log(true),
-                                              .connectParams(["user_id": self.userId, "token": self.token]),
-                                              .path("/chat")
+
+        self.socket = SocketIOClient(socketURL: URL(string: self.socketHost())!, config: [.log(true),
+                                                                                          .connectParams(["user_id": self.userId, "token": self.token]),
+                                                                                          .path("/chat")
 
             ])
-        self.manager!.reconnects = true
-        self.manager!.forceNew = true
-        self.socket = self.manager!.socket(forNamespace: "/")
+
+        self.socket?.reconnects = true
+        self.socket?.forceNew = true
         self.addHandlers()
     }
 
     private func connectSocket() {
-        self.socket!.connect()
+        if self.socket != nil {
+            self.socket!.connect()
+        }
     }
 
     private func configureSocket() {
 
-        if self.manager == nil {
+        if self.socket == nil {
             self.initSocket()
         }
 
-        self.manager!.setConfigs([.log(true),
-                                  .connectParams(["user_id": self.userId, "token": self.token]),
-                                  .path("/chat")
-                                ])
 
-        self.manager!.reconnect()
+        //
+        //        self.manager!.setConfigs([.log(true),
+        //                                  .connectParams(["user_id": self.userId, "token": self.token]),
+        //                                  .path("/chat")
+        //                                ])
+        //
+        //        self.manager!.reconnect()
 
     }
 
@@ -108,16 +109,15 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func clearSocket() {
         self.socket = nil
-        self.manager = nil
     }
 
     private func addHandlers() {
 
         self.socket?.onAny { (data) in
-            if data.event == "reconnectAttempt" {
-                self.manager!.disconnect()
-                self.socket!.connect()
-            }
+            //            if data.event == "reconnectAttempt" {
+            //                self.manager!.disconnect()
+            //                self.socket!.connect()
+            //            }
         }
     }
 
@@ -212,7 +212,15 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     // MARK: - Sign In
     public func SignIn(username: String, password: String, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
-        let params = ["email": username, "password": password, "program": self.program]
+        var params = ["program": self.program]
+        switch self.program {
+        case "nedbank":
+            params = ["profile_id": username, "jwt_token": password, "program": self.program]
+        default:
+            params = ["email": username, "password": password, "program": self.program]
+            break
+        }
+
         post(request: createPostRequest(path: "auth/sign-in", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if let user = data?.user {
                 self.userAuthenticated(user: user)
@@ -512,16 +520,37 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    
+
     // MARK: - Add Method
-    public func AddPaymentMethod(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
-        post(request: createPostRequest(path: "payments/methods", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+    public func AddPaymentMethod(provider: String, cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String, nickname: String, isDefault: Bool , completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
+
+        cardPost(request: createTokenizeCardRequest(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, peachResponse, error) in
             if (success) {
-                completion(success, data?.paymentMethods, error)
+
+                let params = ["provider": "peach",
+                              "token": peachResponse!.id!,
+                              "last_four_digits": peachResponse!.card!.last4Digits!,
+                              "expiry_month": peachResponse!.card!.expiryMonth!,
+                              "expiry_year": peachResponse!.card!.expiryYear!,
+                              "card_holder": peachResponse!.card!.holder!,
+                              "bin": peachResponse!.card!.bin!,
+                              "card_nickname": nickname,
+                              "default": isDefault] as [String : Any]
+
+                self.post(request: self.createPostRequest(path: "payments/methods", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+                    if (success) {
+                        completion(success, data?.paymentMethods, error)
+                    } else {
+                        completion(success, nil, error)
+                    }
+                }
+
             } else {
                 completion(success, nil, error)
             }
         }
+
+
     }
 
     // MARK: - Update Method
@@ -689,19 +718,19 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
 
         let params = [
-              "device_identifier": UIDevice.current.name,
-              "device_manufacturer": "Apple",
-              "device_model": identifier,
-              "device_os": "iOS",
-              "device_os_version": UIDevice.current.systemVersion,
-              "device_carrier": carrierName,
-              "device_screen_size": "\(screenWidth)x\(screenHeight)",
-              "app_version": "3.0.0",
-              "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
-              "app_location_enabled": locationEnabled,
-              "latitude": latString,
-              "longitude": lonString,
-              "device_token": "TEST"
+            "device_identifier": UIDevice.current.name,
+            "device_manufacturer": "Apple",
+            "device_model": identifier,
+            "device_os": "iOS",
+            "device_os_version": UIDevice.current.systemVersion,
+            "device_carrier": carrierName,
+            "device_screen_size": "\(screenWidth)x\(screenHeight)",
+            "app_version": "3.0.0",
+            "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
+            "app_location_enabled": locationEnabled,
+            "latitude": latString,
+            "longitude": lonString,
+            "device_token": "TEST"
             ] as [String : Any]
         post(request: createPostRequest(path: "analytics", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
@@ -773,6 +802,10 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
+    private func cardPost(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
+        tokenizeCardTask(request: request, method: "POST", completion: completion)
+    }
+
     private func post(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ data: Data?, _ error: HeyJudeError?) -> ()) {
         dataTask(request: request, method: "POST", completion: completion)
     }
@@ -783,6 +816,30 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func download(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ data: AnyObject?, _ error: HeyJudeError?) -> ()) {
         fileTask(request: request, method: "GET", completion: completion)
+    }
+
+    private func createTokenizeCardRequest(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
+
+        let urlString = "https://test.oppwa.com/v1/registrations"
+        let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let bodyParameters = [
+            "authentication.userId": "8a8294185452cb3b01545c8cda4f129a",
+            "authentication.password": "W75SfPPsAA",
+            "authentication.entityId": "8a829417545c8cf101545c901a220021",
+            "card.number": cardNumber,
+            "card.holder": holder,
+            "card.expiryMonth": expiryMonth,
+            "card.expiryYear": expiryYear,
+            "card.cvv": cvv,
+            ]
+
+        let bodyString = bodyParameters.queryParameters
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+
+        return request
     }
 
     private func createPostRequest(path: String, params: Dictionary<String, AnyObject>? = nil) -> NSMutableURLRequest {
@@ -882,13 +939,14 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     }
 
+
     private func createMapRequest(url: String) -> NSMutableURLRequest {
         if url.hasPrefix("https://agent.heyjudeapp.com/") {
             var path = url.replacingOccurrences(of: "https://agent.heyjudeapp.com/map?", with: "")
             path = path.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
 
             let urlString = "https://agent.heyjudeapp.com/map?" + path
-            
+
             let request = NSMutableURLRequest(url: URL(string: urlString)!)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
@@ -1000,7 +1058,43 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
                 completion(false, nil, error)
             }
-        }.resume();
+            }.resume();
+    }
+
+
+    private func tokenizeCardTask(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
+        request.httpMethod = method
+
+        let session = URLSession(configuration: URLSessionConfiguration.default);
+
+        session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
+
+            var httpResponseCode = 0
+
+            if let response = response as? HTTPURLResponse {
+                httpResponseCode = response.statusCode
+            }
+
+            if let data = data {
+
+                guard let peachResponse = try? JSONDecoder().decode(PeachResponse.self, from: data) else {
+                    let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
+                    completion(false, nil, error)
+                    return
+                }
+
+                if 200...299 ~= httpResponseCode {
+                    completion(true, peachResponse, nil)
+                } else {
+                    let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [(peachResponse.result?.message)!], requestError: error, response: response)
+                    completion(false, nil, error)
+                }
+
+            } else {
+                let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
+                completion(false, nil, error)
+            }
+            }.resume();
     }
 
 
@@ -1085,4 +1179,28 @@ extension Foundation.Data {
             append(data)
         }
     }
+}
+
+extension Dictionary : URLQueryParameterStringConvertible {
+    /**
+     This computed property returns a query parameters string from the given NSDictionary. For
+     example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
+     string will be @"day=Tuesday&month=January".
+     @return The computed parameters string.
+     */
+    var queryParameters: String {
+        var parts: [String] = []
+        for (key, value) in self {
+            let part = String(format: "%@=%@",
+                              String(describing: key).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!,
+                              String(describing: value).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+            parts.append(part as String)
+        }
+        return parts.joined(separator: "&")
+    }
+
+}
+
+protocol URLQueryParameterStringConvertible {
+    var queryParameters: String {get}
 }

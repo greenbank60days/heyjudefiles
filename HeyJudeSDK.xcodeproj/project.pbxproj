@@ -26,6 +26,9 @@
 		91036B922105A53700E1741A /* SubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91036B812105A53600E1741A /* SubscriptionStatus.swift */; };
 		91036B932105A53700E1741A /* SubscriptionOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91036B822105A53700E1741A /* SubscriptionOption.swift */; };
 		91CBD5D2210166FF0056C7CA /* HeyJudeSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 91CBD5D0210166FF0056C7CA /* HeyJudeSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		91D59C35214B4E0F00FFD265 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C34214B4E0F00FFD265 /* Card.swift */; };
+		91D59C37214B4E3400FFD265 /* PeachResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C36214B4E3400FFD265 /* PeachResponse.swift */; };
+		91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C38214B4E4B00FFD265 /* PeachResult.swift */; };
 		91F9ADCE21017815001AA3D8 /* HeyJudeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CBD5D82101675E0056C7CA /* HeyJudeManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +57,9 @@
 		91CBD5D0210166FF0056C7CA /* HeyJudeSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeyJudeSDK.h; sourceTree = "<group>"; };
 		91CBD5D1210166FF0056C7CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91CBD5D82101675E0056C7CA /* HeyJudeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyJudeManager.swift; sourceTree = "<group>"; };
+		91D59C34214B4E0F00FFD265 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		91D59C36214B4E3400FFD265 /* PeachResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResponse.swift; sourceTree = "<group>"; };
+		91D59C38214B4E4B00FFD265 /* PeachResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,9 @@
 				91036B7E2105A53600E1741A /* Task.swift */,
 				91036B802105A53600E1741A /* User.swift */,
 				91036B742105A53500E1741A /* Vendor.swift */,
+				91D59C34214B4E0F00FFD265 /* Card.swift */,
+				91D59C36214B4E3400FFD265 /* PeachResponse.swift */,
+				91D59C38214B4E4B00FFD265 /* PeachResult.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -241,6 +250,9 @@
 			files = (
 				91036B892105A53700E1741A /* Response.swift in Sources */,
 				91036B932105A53700E1741A /* SubscriptionOption.swift in Sources */,
+				91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */,
+				91D59C37214B4E3400FFD265 /* PeachResponse.swift in Sources */,
+				91D59C35214B4E0F00FFD265 /* Card.swift in Sources */,
 				91036B902105A53700E1741A /* Data.swift in Sources */,
 				91036B8B2105A53700E1741A /* Roadblock.swift in Sources */,
 				91036B832105A53700E1741A /* Attachment.swift in Sources */,
