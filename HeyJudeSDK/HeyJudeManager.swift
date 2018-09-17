@@ -75,9 +75,13 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                                               .path("/chat")
 
             ])
-        self.manager!.reconnects = true
-        self.manager!.forceNew = true
-        self.socket = self.manager!.socket(forNamespace: "/")
+
+        if self.manager != nil {
+            self.manager?.reconnects = true
+            self.manager?.forceNew = true
+            self.socket = self.manager?.socket(forNamespace: "/")
+        }
+
         self.addHandlers()
     }
 
@@ -91,13 +95,14 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             self.initSocket()
         }
 
-        self.manager!.setConfigs([.log(true),
-                                  .connectParams(["user_id": self.userId, "token": self.token]),
-                                  .path("/chat")
-                                ])
+        if self.manager != nil {
+            self.manager?.setConfigs([.log(true),
+                                      .connectParams(["user_id": self.userId, "token": self.token]),
+                                      .path("/chat")
+                ])
 
-        self.manager!.reconnect()
-
+            self.manager?.reconnect()
+        }
     }
 
     private func disconnectSocket() {
@@ -115,8 +120,10 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
         self.socket?.onAny { (data) in
             if data.event == "reconnectAttempt" {
-                self.manager!.disconnect()
-                self.socket!.connect()
+                if self.manager != nil {
+                    self.manager?.disconnect()
+                    self.socket?.connect()
+                }
             }
         }
     }
@@ -125,20 +132,22 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     // MARK: - Bind to Chat Status
     public func BindToChatStatus(completion: @escaping (_ status: String) -> ()) {
 
-        self.socket?.on(clientEvent: .connect) {data, ack in
-            completion("connected")
-        }
+        if self.socket != nil {
+            self.socket?.on(clientEvent: .connect) {data, ack in
+                completion("connected")
+            }
 
-        self.socket?.on(clientEvent: .disconnect) {data, ack in
-            completion("disconnected")
-        }
+            self.socket?.on(clientEvent: .disconnect) {data, ack in
+                completion("disconnected")
+            }
 
-        self.socket?.on(clientEvent: .reconnectAttempt) {data, ack in
-            completion("reconnecting")
-        }
+            self.socket?.on(clientEvent: .reconnectAttempt) {data, ack in
+                completion("reconnecting")
+            }
 
-        self.socket?.on(clientEvent: .reconnect) {data, ack in
-            completion("reconnecting")
+            self.socket?.on(clientEvent: .reconnect) {data, ack in
+                completion("reconnecting")
+            }
         }
 
     }
@@ -147,20 +156,21 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     // MARK: - Bind to Chat
     public func BindToChat(completion: @escaping (_ message: Message) -> ()) {
 
-        self.socket!.on("chat-channel:" + String(self.userId)) {data, ack in
+        if self.socket != nil {
+            self.socket?.on("chat-channel:" + String(self.userId)) {data, ack in
 
-            print("Message Received!")
-            let messageJson = data[0] as! String
+                print("Message Received!")
+                let messageJson = data[0] as! String
 
-            let messageData = messageJson.data(using: .utf8)
+                let messageData = messageJson.data(using: .utf8)
 
-            guard let message = try? JSONDecoder().decode(Message.self, from: messageData!) else {
-                print("Error: Couldn't decode data into Response")
-                return
+                guard let message = try? JSONDecoder().decode(Message.self, from: messageData!) else {
+                    print("Error: Couldn't decode data into Response")
+                    return
+                }
+                completion(message)
             }
-            completion(message)
         }
-
     }
 
     private func userAuthenticated(user: User) {
