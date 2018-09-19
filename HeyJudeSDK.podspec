@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "HeyJudeSDK"
-s.version      = "1.0.4"
+s.version      = "1.0.5"
 s.summary      = "Hey Jude's iOS SDK"
 s.description  = "Hey Jude's iOS SDK for API V1"
 s.homepage     = "http://heyjudeapp.com"

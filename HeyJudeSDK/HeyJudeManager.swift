@@ -727,28 +727,31 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             break
         }
 
-        let params = [
-            "device_identifier": UIDevice.current.name,
-            "device_manufacturer": "Apple",
-            "device_model": identifier,
-            "device_os": "iOS",
-            "device_os_version": UIDevice.current.systemVersion,
-            "device_carrier": carrierName,
-            "device_screen_size": "\(screenWidth)x\(screenHeight)",
-            "app_version": "3.0.0",
-            "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
-            "app_location_enabled": locationEnabled,
-            "latitude": latString,
-            "longitude": lonString,
-            "device_token": "TEST"
-            ] as [String : Any]
-        post(request: createPostRequest(path: "analytics", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
-            if (success) {
-                completion(success, error)
-            } else {
-                completion(success, error)
+        DispatchQueue.main.async {
+            let params = [
+                "device_identifier": UIDevice.current.name,
+                "device_manufacturer": "Apple",
+                "device_model": identifier,
+                "device_os": "iOS",
+                "device_os_version": UIDevice.current.systemVersion,
+                "device_carrier": carrierName,
+                "device_screen_size": "\(screenWidth)x\(screenHeight)",
+                "app_version": "3.0.0",
+                "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
+                "app_location_enabled": locationEnabled,
+                "latitude": latString,
+                "longitude": lonString,
+                "device_token": "TEST"
+                ] as [String : Any]
+            self.post(request: self.createPostRequest(path: "analytics", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+                if (success) {
+                    completion(success, error)
+                } else {
+                    completion(success, error)
+                }
             }
         }
+
     }
 
     // MARK: - Map
