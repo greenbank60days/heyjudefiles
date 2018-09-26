@@ -177,7 +177,7 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         self.userId = user.id!
         self.configureSocket()
         self.connectSocket()
-        self.Analytics() { (success, error) in }
+        self.Analytics(pushToken: nil) { (success, error) in }
         self.ResetBadgeCount() { (success, error) in }
     }
 
@@ -220,14 +220,18 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         completion(false, error)
 
     }
+
+
+
     // MARK: - Sign In
-    public func SignIn(username: String, password: String, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
+    public func SignIn(username: String, password: String, pushToken: String?, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         var params = ["program": self.program]
+        let pushToken = pushToken ?? ""
         switch self.program {
         case "nedbank":
-            params = ["profile_id": username, "jwt_token": password, "program": self.program]
+            params = ["profile_id": username, "jwt_token": password, "program": self.program, "platform": "ios", "device_token": pushToken]
         default:
-            params = ["email": username, "password": password, "program": self.program]
+            params = ["email": username, "password": password, "program": self.program, "platform": "ios", "device_token": pushToken]
             break
         }
 
@@ -241,6 +245,7 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+
 
     // MARK: - Verify Phone
     public func VerifyPhone(mobile: String, type: String, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
@@ -681,7 +686,7 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Analytics
-    public func Analytics(completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
+    public func Analytics(pushToken: String?, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         let screenSize = UIScreen.main.bounds
         let screenWidth = screenSize.width
         let screenHeight = screenSize.height
@@ -727,6 +732,9 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             break
         }
 
+
+        let pushToken = pushToken ?? ""
+
         DispatchQueue.main.async {
             let params = [
                 "device_identifier": UIDevice.current.name,
@@ -741,8 +749,9 @@ public class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 "app_location_enabled": locationEnabled,
                 "latitude": latString,
                 "longitude": lonString,
-                "device_token": "TEST"
+                "device_token": pushToken
                 ] as [String : Any]
+
             self.post(request: self.createPostRequest(path: "analytics", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
                 if (success) {
                     completion(success, error)
