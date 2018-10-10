@@ -11,6 +11,7 @@ public class SubscriptionStatus: Decodable, CustomStringConvertible {
 
     public var valid: Bool?
     public var autoRenew: Bool?
+    public var trial: Bool?
     public var renewalDate: String?
     public var expiryText: String?
     public var currentSubscriptionOption: Int?
@@ -20,6 +21,7 @@ public class SubscriptionStatus: Decodable, CustomStringConvertible {
     enum CodingKeys : String, CodingKey {
         case valid
         case autoRenew = "auto_renew"
+        case trial = "trial"
         case renewalDate = "renewal_date"
         case expiryText = "expiry_text"
         case currentSubscriptionOption = "current_subscription_option"
@@ -30,6 +32,7 @@ public class SubscriptionStatus: Decodable, CustomStringConvertible {
         var description = "\n*******Subscription Status*******\n"
         description += "valid: \(self.valid!)\n"
         description += "autoRenew: \(self.autoRenew!)\n"
+        description += "trial: \(self.trial!)\n"
         description += "renewalDate: \(self.renewalDate!)\n"
         description += "expiryText: \(self.expiryText!)\n"
         description += "currentSubscriptionOption: \(self.currentSubscriptionOption!)\n"
