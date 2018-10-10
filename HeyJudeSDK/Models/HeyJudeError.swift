@@ -13,7 +13,7 @@ public class HeyJudeError {
     public var response: URLResponse?
     public var sessionEnded: Bool
 
-    init(httpResponseCode: Int?, apiErrors: [String]?, requestError: Error?, response: URLResponse?) {
+    public init(httpResponseCode: Int?, apiErrors: [String]?, requestError: Error?, response: URLResponse?) {
         if httpResponseCode != nil {
             self.httpResponseCode = httpResponseCode
         }
