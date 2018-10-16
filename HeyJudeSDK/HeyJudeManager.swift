@@ -639,6 +639,16 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
 
     // MARK: Subscription
+    // MARK: - Preview Options
+    open func PreviewSubscriptionOptions(country: String, completion: @escaping (_ success: Bool, _ object: [SubscriptionOption]?, _ error: HeyJudeError?) -> ()) {
+        get(request: createGetRequest(path: "subscriptions/preview-options?country=" + country)) { (success, data, error) in
+            if (success) {
+                completion(success, data?.subscriptionOptions, error)
+            } else {
+                completion(success, nil, error)
+            }
+        }
+    }
     // MARK: - Options
     open func SubscriptionOptions(completion: @escaping (_ success: Bool, _ object: [SubscriptionOption]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "subscriptions/options")) { (success, data, error) in

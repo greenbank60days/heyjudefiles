@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "HeyJudeSDK"
-s.version      = "1.0.9"
+s.version      = "1.0.10"
 s.summary      = "Hey Jude's iOS SDK"
 s.description  = "Hey Jude's iOS SDK for API V1"
 s.homepage     = "http://heyjudeapp.com"
@@ -11,5 +11,5 @@ s.source       = { :git => "https://bitbucket.org/tctdigital/hey-jude-ios-sdk.gi
 
 s.source_files  = "HeyJudeSDK/**/*.swift", "HeyJudeSDK/Models/*.swift"
 s.swift_version = "4.2"
-s.dependency "Socket.IO-Client-Swift", "~> 13.1.0"
+s.dependency "Socket.IO-Client-Swift", "~> 13.3.0"
 end
