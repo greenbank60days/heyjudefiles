@@ -70,7 +70,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func initSocket() {
         self.manager = SocketManager(socketURL: URL(string: self.socketHost())!,
-                                     config: [.log(true),
+                                     config: [.log(false),
+                                              .secure(true),
+                                              .forceWebsockets(true),
                                               .connectParams(["user_id": self.userId, "token": self.token]),
                                               .path("/chat")
 
@@ -96,7 +98,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
 
         if self.manager != nil {
-            self.manager?.setConfigs([.log(true),
+            self.manager?.setConfigs([.log(false),
+                                      .secure(true),
+                                      .forceWebsockets(true),
                                       .connectParams(["user_id": self.userId, "token": self.token]),
                                       .path("/chat")
                 ])
@@ -827,9 +831,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     private func socketHost() -> String! {
         switch self.environment {
-        case 0: return "https://agent.heyjudeapp.com/"
-        case 1: return "https://staging.heyjudeapp.com/"
-        case 2: return "http://heyjudeapp.com.tctdigital.xyz/"
+        case 0: return "wss://agent.heyjudeapp.com:443/"
+        case 1: return "wss://staging.heyjudeapp.com:443/"
+        case 2: return "ws://heyjudeapp.com.tctdigital.xyz:80/"
         default: return ""
         }
     }
