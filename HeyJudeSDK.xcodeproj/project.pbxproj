@@ -30,7 +30,20 @@
 		91D59C37214B4E3400FFD265 /* PeachResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C36214B4E3400FFD265 /* PeachResponse.swift */; };
 		91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C38214B4E4B00FFD265 /* PeachResult.swift */; };
 		91F9ADCE21017815001AA3D8 /* HeyJudeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CBD5D82101675E0056C7CA /* HeyJudeManager.swift */; };
+		B0D19A6E22088788000B9C76 /* HeyJudeSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D19A6D22088788000B9C76 /* HeyJudeSDKTests.swift */; };
+		B0D19A7022088788000B9C76 /* HeyJudeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91CBD5CD210166FF0056C7CA /* HeyJudeSDK.framework */; };
+		B0D19A79220887F2000B9C76 /* HeyJudeSDKTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = B0D19A6B22088788000B9C76 /* HeyJudeSDKTests.xctest */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B0D19A7122088788000B9C76 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91CBD5C4210166FF0056C7CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91CBD5CC210166FF0056C7CA;
+			remoteInfo = HeyJudeSDK;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		24B18C1C67251FC24BBB6EF1 /* Pods-HeyJudeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeyJudeSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeyJudeSDK/Pods-HeyJudeSDK.release.xcconfig"; sourceTree = "<group>"; };
@@ -60,6 +73,9 @@
 		91D59C34214B4E0F00FFD265 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		91D59C36214B4E3400FFD265 /* PeachResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResponse.swift; sourceTree = "<group>"; };
 		91D59C38214B4E4B00FFD265 /* PeachResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResult.swift; sourceTree = "<group>"; };
+		B0D19A6B22088788000B9C76 /* HeyJudeSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeyJudeSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0D19A6D22088788000B9C76 /* HeyJudeSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyJudeSDKTests.swift; sourceTree = "<group>"; };
+		B0D19A6F22088788000B9C76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +84,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5261B25A5EA0919C0E7B52A2 /* Pods_HeyJudeSDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0D19A6822088788000B9C76 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0D19A7022088788000B9C76 /* HeyJudeSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				91CBD5CF210166FF0056C7CA /* HeyJudeSDK */,
+				B0D19A6C22088788000B9C76 /* HeyJudeSDKTests */,
 				91CBD5CE210166FF0056C7CA /* Products */,
 				18E367A9A0A9BDB5B9E4355D /* Pods */,
 				FACA59F55D9E9437B894C303 /* Frameworks */,
@@ -124,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				91CBD5CD210166FF0056C7CA /* HeyJudeSDK.framework */,
+				B0D19A6B22088788000B9C76 /* HeyJudeSDKTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,6 +163,15 @@
 				91CBD5D1210166FF0056C7CA /* Info.plist */,
 			);
 			path = HeyJudeSDK;
+			sourceTree = "<group>";
+		};
+		B0D19A6C22088788000B9C76 /* HeyJudeSDKTests */ = {
+			isa = PBXGroup;
+			children = (
+				B0D19A6D22088788000B9C76 /* HeyJudeSDKTests.swift */,
+				B0D19A6F22088788000B9C76 /* Info.plist */,
+			);
+			path = HeyJudeSDKTests;
 			sourceTree = "<group>";
 		};
 		FACA59F55D9E9437B894C303 /* Frameworks */ = {
@@ -180,18 +215,40 @@
 			productReference = 91CBD5CD210166FF0056C7CA /* HeyJudeSDK.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B0D19A6A22088788000B9C76 /* HeyJudeSDKTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B0D19A7522088788000B9C76 /* Build configuration list for PBXNativeTarget "HeyJudeSDKTests" */;
+			buildPhases = (
+				B0D19A6722088788000B9C76 /* Sources */,
+				B0D19A6822088788000B9C76 /* Frameworks */,
+				B0D19A6922088788000B9C76 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B0D19A7222088788000B9C76 /* PBXTargetDependency */,
+			);
+			name = HeyJudeSDKTests;
+			productName = HeyJudeSDKTests;
+			productReference = B0D19A6B22088788000B9C76 /* HeyJudeSDKTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		91CBD5C4210166FF0056C7CA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "TCT Digital";
 				TargetAttributes = {
 					91CBD5CC210166FF0056C7CA = {
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 0940;
+					};
+					B0D19A6A22088788000B9C76 = {
+						CreatedOnToolsVersion = 10.1;
 					};
 				};
 			};
@@ -208,12 +265,21 @@
 			projectRoot = "";
 			targets = (
 				91CBD5CC210166FF0056C7CA /* HeyJudeSDK */,
+				B0D19A6A22088788000B9C76 /* HeyJudeSDKTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		91CBD5CB210166FF0056C7CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0D19A79220887F2000B9C76 /* HeyJudeSDKTests.xctest in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0D19A6922088788000B9C76 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -272,7 +338,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B0D19A6722088788000B9C76 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0D19A6E22088788000B9C76 /* HeyJudeSDKTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B0D19A7222088788000B9C76 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91CBD5CC210166FF0056C7CA /* HeyJudeSDK */;
+			targetProxy = B0D19A7122088788000B9C76 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		91CBD5D3210166FF0056C7CA /* Debug */ = {
@@ -452,6 +534,45 @@
 			};
 			name = Release;
 		};
+		B0D19A7322088788000B9C76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = HeyJudeSDKTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "TCT-Digital.HeyJudeSDKTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B0D19A7422088788000B9C76 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = HeyJudeSDKTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "TCT-Digital.HeyJudeSDKTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -469,6 +590,15 @@
 			buildConfigurations = (
 				91CBD5D6210166FF0056C7CA /* Debug */,
 				91CBD5D7210166FF0056C7CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B0D19A7522088788000B9C76 /* Build configuration list for PBXNativeTarget "HeyJudeSDKTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0D19A7322088788000B9C76 /* Debug */,
+				B0D19A7422088788000B9C76 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
