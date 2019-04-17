@@ -66,8 +66,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
 
 
-    // MARK: SocketIO
-
+    // MARK: - SocketIO
     private func initSocket() {
         self.manager = SocketManager(socketURL: URL(string: self.socketHost())!,
                                      config: [.log(false),
@@ -132,8 +131,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-
     // MARK: - Bind to Chat Status
+    /*
     open func BindToChatStatus(completion: @escaping (_ status: String) -> ()) {
 
         if self.socket != nil {
@@ -152,18 +151,36 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             self.socket?.on(clientEvent: .reconnect) {data, ack in
                 completion("reconnecting")
             }
+        } else {
+            completion("unknown")
         }
-
     }
-
-
+ */
+    
+    open func BindToChatStatus(completion: @escaping (_ status: String) ->()) {
+        guard let socket = self.socket else {
+            completion("socket not found")
+            return }
+        let socketConnectionStatus = socket.status
+        
+        switch socketConnectionStatus {
+        case SocketIOStatus.connected:
+            completion("connected")
+        case SocketIOStatus.connecting:
+            completion("socket connecting")
+        case SocketIOStatus.disconnected:
+            completion("disconnected")
+        case SocketIOStatus.notConnected:
+            completion("not connected")
+        }
+    }
+    
     // MARK: - Bind to Chat
     open func BindToChat(completion: @escaping (_ message: Message) -> ()) {
 
         if self.socket != nil {
             self.socket?.on("chat-channel:" + String(self.userId)) {data, ack in
 
-                print("Message Received!")
                 let messageJson = data[0] as! String
 
                 let messageData = messageJson.data(using: .utf8)
@@ -192,16 +209,15 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         self.clearSocket()
     }
 
-    // MARK: Auth
-
-    // MARK: - Pause Session
+    // MARK: - Auth
+    // MARK: Pause Session
     open func PauseSession() -> String {
         let token = self.token
         self.userSignedOut()
         return token
     }
 
-    // MARK: - Resume Session
+    // MARK: Resume Session
     open func ResumeSession(token: String, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()){
 
         let jwtClaims = self.decodeToken(jwtToken: token)
@@ -225,8 +241,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     }
 
-
-
     // MARK: - Sign In
     open func SignIn(username: String, password: String, pushToken: String?, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         var params = ["program": self.program]
@@ -249,7 +263,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-
 
     // MARK: - Verify Phone
     open func VerifyPhone(mobile: String, type: String, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
@@ -336,7 +349,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: User
+    // MARK: - User
     // MARK: Profile
     open func Profile(completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "users/profile")) { (success, data, error) in
@@ -347,6 +360,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: Update Profile
     open func UpdateProfile(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -357,6 +371,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: Skip Roadblock
     open func SkipRoadblock(roadblock: String, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         let params = ["roadblock": roadblock]
@@ -369,8 +384,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: Tasks
-    // MARK: - Open
+    // MARK: - Tasks
+    // MARK: Open
     open func OpenTasks(completion: @escaping (_ success: Bool, _ object: [Task]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "tasks/open")) { (success, data, error) in
             if let tasks = data?.tasks {
@@ -381,7 +396,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Closed
+    // MARK: Closed
     open func ClosedTasks(completion: @escaping (_ success: Bool, _ object: [Task]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "tasks/closed")) { (success, data, error) in
 
@@ -393,7 +408,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Get Task
+    // MARK: Get Task
     open func GetTask(id: Int, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "tasks/" + String(id))) { (success, data, error) in
 
@@ -405,7 +420,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Cancel Task
+    // MARK: Cancel Task
     open func CancelTask(id: Int, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/cancel")) { (success, data, error) in
 
@@ -417,7 +432,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Reopen Task
+    // MARK: Reopen Task
     open func ReopenTask(id: Int, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/reopen")) { (success, data, error) in
 
@@ -429,7 +444,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Delete Task
+    // MARK: Delete Task
     open func DeleteTask(id: Int, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/delete")) { (success, data, error) in
 
@@ -440,7 +455,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Create Task
+    
+    // MARK: Create Task
     open func CreateTask(title: String, createDefaultMessage: Bool, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
         let lat = self.currentLocation?.coordinate.latitude
         let lon = self.currentLocation?.coordinate.longitude
@@ -463,7 +479,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Message Task
+    
+    // MARK: Message Task
     open func MessageTask(id: Int, params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/message", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
@@ -473,7 +490,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Rate Task
+    
+    // MARK: Rate Task
     open func RateTask(id: Int, params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/rate", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
@@ -483,7 +501,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Get Task Rating
+    
+    // MARK: Get Task Rating
     open func TaskRating(id: Int, unixTimeStamp: String, completion: @escaping (_ success: Bool, _ rating: Int?, _ error: HeyJudeError?) -> ()) {
         let params = ["unix_timestamp": unixTimeStamp]
         post(request: createPostRequest(path: "tasks/" + String(id) + "/rating", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -495,8 +514,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: Attachments
-    // MARK: - Upload
+    // MARK: - Attachments
+    // MARK: Upload
     open func UploadAttachment(path: String, completion: @escaping (_ success: Bool, _ object: Attachment?, _ error: HeyJudeError?) -> ()) {
         post(request: createMultiPartRequest(path: "attachments/upload", filePath: path)) { (success, data, error) in
             if (success) {
@@ -506,7 +525,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Download
+    
+    // MARK: Download
     open func DownloadAttachment(id: Int, completion: @escaping (_ success: Bool, _ object: AnyObject?, _ error: HeyJudeError?) -> ()) {
         download(request: createDownloadRequest(path: "attachments/download/" + String(id))) { (success, data, error) in
             if (success) {
@@ -516,7 +536,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    // MARK: - Detail
+    
+    // MARK: Detail
     open func AttachmentDetail(id: Int, completion: @escaping (_ success: Bool, _ object: Attachment?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "attachments/detail/" + String(id))) { (success, data, error) in
 
@@ -528,8 +549,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: Payments
-    // MARK: - Methods
+    // MARK: - Payments
+    // MARK: Methods
     open func PaymentMethods(completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "payments/methods")) { (success, data, error) in
             if (success) {
@@ -540,7 +561,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Add Method
+    // MARK: Add Method
     open func AddPaymentMethod(provider: String, cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String, nickname: String, isDefault: Bool , completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
 
         cardPost(request: createTokenizeCardRequest(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, peachResponse, error) in
@@ -572,7 +593,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
 
     }
 
-    // MARK: - Update Method
+    // MARK: Update Method
     open func UpdatePaymentMethod(id: Int, params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "payments/methods/" + String(id), params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
@@ -583,7 +604,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Delete Method
+    // MARK: Delete Method
     open func DeletePaymentMethod(id: Int, completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "payments/methods/" + String(id) + "/delete")) { (success, data, error) in
             if (success) {
@@ -594,7 +615,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Request
+    // MARK: Request
     open func PaymentRequest(id: Int, completion: @escaping (_ success: Bool, _ object: PaymentRequest?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "payments/requests/" + String(id))) { (success, data, error) in
             if (success) {
@@ -605,7 +626,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Pay
+    // MARK: Pay
     open func Pay(paymentRequestId: Int, paymentMethodId: Int, completion: @escaping (_ success: Bool, _ object: PaymentRequest?, _ error: HeyJudeError?) -> ()) {
         let params = ["payment_request_id": paymentRequestId, "payment_method_id": paymentMethodId] as [String : Any]
         post(request: createPostRequest(path: "payments/pay", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -617,8 +638,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-
-    // MARK: - History
+    // MARK: History
     open func PaymentHistory(completion: @escaping (_ success: Bool, _ object: [Payment]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "payments/history")) { (success, data, error) in
             if (success) {
@@ -629,7 +649,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Invoice
+    // MARK: Invoice
     open func Invoice(id: Int, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         let params = ["payment_id": id] as [String : Any]
         post(request: createPostRequest(path: "payments/invoice", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -641,9 +661,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-
-    // MARK: Subscription
-    // MARK: - Preview Options
+    // MARK: - Subscription
+    // MARK: Preview Options
     open func PreviewSubscriptionOptions(country: String, completion: @escaping (_ success: Bool, _ object: [SubscriptionOption]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "subscriptions/preview-options?country=" + country)) { (success, data, error) in
             if (success) {
@@ -664,7 +683,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    // MARK: - Options
+    // MARK: Options
     open func SubscriptionOptions(completion: @escaping (_ success: Bool, _ object: [SubscriptionOption]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "subscriptions/options")) { (success, data, error) in
             if (success) {
@@ -675,7 +694,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Status
+    // MARK: Status
     open func SubscriptionStatus(completion: @escaping (_ success: Bool, _ object: SubscriptionStatus?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "subscriptions/status")) { (success, data, error) in
             if (success) {
@@ -686,7 +705,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Select
+    // MARK: Select
     open func SubscriptionSelect(id: Int, completion: @escaping (_ success: Bool, _ object: SubscriptionStatus?, _ error: HeyJudeError?) -> ()) {
         let params = ["subscription_option_id": id] as [String : Any]
         post(request: createPostRequest(path: "subscriptions/select", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -698,7 +717,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: - Auto Renew
+    // MARK: Auto Renew
     open func SubscriptionAutoRenew(autoRenew: Bool, completion: @escaping (_ success: Bool, _ object: SubscriptionStatus?, _ error: HeyJudeError?) -> ()) {
         let params = ["auto_renew": autoRenew] as [String : Any]
         post(request: createPostRequest(path: "subscriptions/auto-renew", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -710,7 +729,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    // MARK: Analytics
+    // MARK: - Analytics
     open func Analytics(pushToken: String?, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         let screenSize = UIScreen.main.bounds
         let screenWidth = screenSize.width
@@ -828,7 +847,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    //MARK: Convenience Methods
+    //MARK: - Convenience Methods
 
 
     private func host() -> String! {
@@ -1009,39 +1028,45 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
 
     private func createMultiPartRequest(path: String, filePath: String, params: Dictionary<String, AnyObject>? = nil) -> NSMutableURLRequest {
-
-        var body = Foundation.Data()
-        let boundary = self.generateBoundaryString()
-        let urlString = self.host() + path
-        let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-        request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
-        if (self.token != "") {
-            request.addValue("Bearer " + self.token, forHTTPHeaderField: "Authorization")
-        }
-
-        let url = URL(fileURLWithPath: filePath)
-        let filename = url.lastPathComponent
-        let data = try! Foundation.Data(contentsOf: url)
-        let mimetype = mimeType(for: path)
-
-        if params != nil {
-            for (key, value) in params! {
-                body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-                body.append("\(value)\r\n")
+        
+        var multiPartRequest = NSMutableURLRequest()
+        do {
+            var body = Foundation.Data()
+            let boundary = self.generateBoundaryString()
+            let urlString = self.host() + path
+            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
+            if (self.token != "") {
+                request.addValue("Bearer " + self.token, forHTTPHeaderField: "Authorization")
             }
+            
+            let url = URL(fileURLWithPath: filePath)
+            let filename = url.lastPathComponent
+            let data = try Foundation.Data(contentsOf: url)
+            let mimetype = mimeType(for: path)
+            
+            if params != nil {
+                for (key, value) in params! {
+                    body.append("--\(boundary)\r\n")
+                    body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                    body.append("\(value)\r\n")
+                }
+            }
+            
+            body.append("--\(boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
+            body.append("Content-Type: \(mimetype)\r\n\r\n")
+            body.append(data)
+            body.append("\r\n")
+            body.append("--\(boundary)--\r\n")
+            request.httpBody = body
+            multiPartRequest = request
+        } catch {
+            print(error.localizedDescription)
         }
-
-        body.append("--\(boundary)\r\n")
-        body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
-        body.append("Content-Type: \(mimetype)\r\n\r\n")
-        body.append(data)
-        body.append("\r\n")
-        body.append("--\(boundary)--\r\n")
-        request.httpBody = body
-        return request
+         return multiPartRequest
     }
 
     private func mimeType(for path: String) -> String {

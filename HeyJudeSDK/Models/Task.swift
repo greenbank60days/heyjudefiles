@@ -8,6 +8,8 @@
 
 public class Task: Decodable, CustomStringConvertible {
 
+    public init () { }
+    
     public var id: Int?
     public var title: String?
     public var createdAt: String?
