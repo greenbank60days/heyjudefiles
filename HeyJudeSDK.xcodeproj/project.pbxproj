@@ -30,6 +30,7 @@
 		91D59C37214B4E3400FFD265 /* PeachResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C36214B4E3400FFD265 /* PeachResponse.swift */; };
 		91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C38214B4E4B00FFD265 /* PeachResult.swift */; };
 		91F9ADCE21017815001AA3D8 /* HeyJudeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CBD5D82101675E0056C7CA /* HeyJudeManager.swift */; };
+		B0E8A3EB2267489400ABA0C9 /* HeyJudeChatBindStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8A3EA2267489400ABA0C9 /* HeyJudeChatBindStatus.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		91D59C34214B4E0F00FFD265 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		91D59C36214B4E3400FFD265 /* PeachResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResponse.swift; sourceTree = "<group>"; };
 		91D59C38214B4E4B00FFD265 /* PeachResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResult.swift; sourceTree = "<group>"; };
+		B0E8A3EA2267489400ABA0C9 /* HeyJudeChatBindStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyJudeChatBindStatus.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				91D59C34214B4E0F00FFD265 /* Card.swift */,
 				91D59C36214B4E3400FFD265 /* PeachResponse.swift */,
 				91D59C38214B4E4B00FFD265 /* PeachResult.swift */,
+				B0E8A3EA2267489400ABA0C9 /* HeyJudeChatBindStatus.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				91F9ADCE21017815001AA3D8 /* HeyJudeManager.swift in Sources */,
 				91036B8F2105A53700E1741A /* Task.swift in Sources */,
 				91036B8E2105A53700E1741A /* PaymentMethod.swift in Sources */,
+				B0E8A3EB2267489400ABA0C9 /* HeyJudeChatBindStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

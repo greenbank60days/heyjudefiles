@@ -28,16 +28,4 @@ public class HeyJudeError {
         }
         self.sessionEnded = false
     }
-
-
-//    public var description: String {
-//        var description = "\n*******Payment Request*******\n"
-//        description += "id: \(self.id!)\n"
-//        description += "currency: \(self.currency!)\n"
-//        description += "amountTotal: \(self.amountTotal!)\n"
-//        description += "status: \(self.status!)\n"
-//        description += "details: \(self.details!)\n"
-//        description += "invoiceDescription: \(self.invoiceDescription!)\n"
-//        return description
-//    }
 }
