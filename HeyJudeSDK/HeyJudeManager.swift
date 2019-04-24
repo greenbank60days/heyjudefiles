@@ -28,7 +28,7 @@ public enum HeyJudeEnvironment {
 open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     private let locationManager = CLLocationManager()
-    private var currentLocation: CLLocation!
+    private var currentLocation: CLLocation?
     private var environment: Int
     private var program: String
     private var apiKey: String
@@ -87,7 +87,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     private func connectSocket() {
-        self.socket!.connect()
+        guard let socket = self.socket else { return }
+        socket.connect()
     }
     
     private func configureSocket() {
@@ -110,7 +111,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     private func disconnectSocket() {
         if self.socket != nil {
-            self.socket!.disconnect()
+             guard let socket = self.socket else { return }
+            socket.disconnect()
         }
     }
     
@@ -185,11 +187,10 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         if self.socket != nil {
             self.socket?.on("chat-channel:" + String(self.userId)) {data, ack in
                 
-                let messageJson = data[0] as! String
-                
-                let messageData = messageJson.data(using: .utf8)
-                
-                guard let message = try? JSONDecoder().decode(Message.self, from: messageData!) else {
+                guard let messageJson = data[0] as? String,
+                let messageData = messageJson.data(using: .utf8) else { return }
+            
+                guard let message = try? JSONDecoder().decode(Message.self, from: messageData) else {
                     print("Error: Couldn't decode data into Response")
                     return
                 }
@@ -572,13 +573,22 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         cardPost(request: createTokenizeCardRequest(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, peachResponse, error) in
             if (success) {
                 
+                guard let peachResponse = peachResponse,
+                let peachResponseID = peachResponse.id,
+                let peachCard = peachResponse.card,
+                let lastFourDigits = peachCard.last4Digits,
+                let expiryMonth = peachCard.last4Digits,
+                let expiryYear = peachCard.expiryYear,
+                let holder = peachCard.holder,
+                let bin = peachCard.bin else { return }
+                
                 let params = ["provider": "peach",
-                              "token": peachResponse!.id!,
-                              "last_four_digits": peachResponse!.card!.last4Digits!,
-                              "expiry_month": peachResponse!.card!.expiryMonth!,
-                              "expiry_year": peachResponse!.card!.expiryYear!,
-                              "card_holder": peachResponse!.card!.holder!,
-                              "bin": peachResponse!.card!.bin!,
+                              "token": peachResponseID,
+                              "last_four_digits": lastFourDigits,
+                              "expiry_month": expiryMonth,
+                              "expiry_year": expiryYear,
+                              "card_holder": holder,
+                              "bin": bin,
                               "card_nickname": nickname,
                               "default": isDefault] as [String : Any]
                 
@@ -855,7 +865,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     //MARK: - Convenience Methods
     
     
-    private func host() -> String! {
+    private func host() -> String {
         switch self.environment {
         case 0: return "https://agent.heyjudeapp.com/api/v1/"
         case 1: return "https://staging.heyjudeapp.com/api/v1/"
@@ -864,7 +874,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    private func socketHost() -> String! {
+    private func socketHost() -> String {
         switch self.environment {
         case 0: return "wss://agent.heyjudeapp.com:443/"
         case 1: return "wss://staging.heyjudeapp.com:443/"
@@ -892,7 +902,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     private func createTokenizeCardRequest(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
         
         let urlString = (self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
-        let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+        guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+        let request = NSMutableURLRequest(url: url as URL)
         
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
@@ -916,11 +927,13 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     private func createPostRequest(path: String, params: Dictionary<String, AnyObject>? = nil) -> NSMutableURLRequest {
         
         if (params != nil) {
-            let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+             let urlString = self.host() + path
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: params!, options: .prettyPrinted)
+                guard let parameters = params else { return NSMutableURLRequest() }
+                request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
             } catch let error {
                 print(error.localizedDescription)
             }
@@ -934,7 +947,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             return request
         } else {
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
@@ -950,10 +964,12 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
         if (params != nil) {
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: params!, options: .prettyPrinted)
+                guard let parameters = params else { return NSMutableURLRequest() }
+                request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
             } catch let error {
                 print(error.localizedDescription)
             }
@@ -967,7 +983,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             return request
         } else {
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
@@ -983,10 +1000,12 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
         if (params != nil) {
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: params!, options: .prettyPrinted)
+                guard let parameters = params else { return NSMutableURLRequest() }
+                request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
             } catch let error {
                 print(error.localizedDescription)
             }
