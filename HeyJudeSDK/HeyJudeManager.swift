@@ -1018,7 +1018,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             return request
         } else {
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let url = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url as URL)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
             if (self.token != "") {
@@ -1036,8 +1037,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             path = path.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
             
             let urlString = "https://agent.heyjudeapp.com/map?" + path
-            
-            let request = NSMutableURLRequest(url: URL(string: urlString)!)
+            guard let url = URL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: url)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
             if (self.token != "") {
@@ -1045,8 +1046,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
             return request
         }
-        
-        let request = NSMutableURLRequest(url: NSURL(string: self.host())! as URL)
+        guard let url = NSURL(string: self.host()) else { return NSMutableURLRequest() }
+        let request = NSMutableURLRequest(url: url as URL)
         return request
         
     }
@@ -1058,7 +1059,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             var body = Foundation.Data()
             let boundary = self.generateBoundaryString()
             let urlString = self.host() + path
-            let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+            guard let multipartURL = NSURL(string: urlString) else { return NSMutableURLRequest() }
+            let request = NSMutableURLRequest(url: multipartURL as URL)
             request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             
             request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
@@ -1095,14 +1097,10 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     private func mimeType(for path: String) -> String {
         let url = NSURL(fileURLWithPath: path)
-        let pathExtension = url.pathExtension
-        
-        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension! as NSString, nil)?.takeRetainedValue()
-        {
-            if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue()
-            {
-                return mimetype as String
-            }
+        if let pathExtension = url.pathExtension,
+            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue(),
+            let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
+            return mimetype as String
         }
         return "application/octet-stream";
     }
