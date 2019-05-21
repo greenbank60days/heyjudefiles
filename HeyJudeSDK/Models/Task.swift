@@ -15,6 +15,7 @@ public class Task: Decodable, CustomStringConvertible {
     public var open: Bool?
     public var messages: [Message]?
 
+    public init () {}
 
     enum CodingKeys : String, CodingKey {
         case id
