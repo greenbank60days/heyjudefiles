@@ -716,6 +716,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         let screenWidth = screenSize.width
         let screenHeight = screenSize.height
         
+        
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -723,7 +724,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
+    
         let networkInfo = CTTelephonyNetworkInfo()
         let carrier = networkInfo.subscriberCellularProvider
         
@@ -757,7 +758,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             break
         }
         
-        
         let pushToken = pushToken ?? ""
         
         DispatchQueue.main.async {
@@ -785,7 +785,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                     completion(success, error)
                 }
             }
-        }
+       }
         
     }
     
