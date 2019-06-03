@@ -349,11 +349,24 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     // MARK: Update Profile
     open func UpdateProfile(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
-        post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
-            if let user = data?.user {
-                completion(success, user, error)
-            } else {
-                completion(false, nil, error)
+        
+        if let filePath = params["profile_image"] as? String {
+            // Updating Profile Image
+            post(request: createMultiPartRequest(path: "users/profile", filePath: filePath, params: params)) { (success, data, error) in
+                if let user = data?.user {
+                    completion(success, user, error)
+                } else {
+                    completion(false, nil, error)
+                }
+            }
+        } else {
+            // Updating Profile
+            post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+                if let user = data?.user {
+                    completion(success, user, error)
+                } else {
+                    completion(false, nil, error)
+                }
             }
         }
     }
@@ -1036,7 +1049,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
         
         body.append("--\(boundary)\r\n")
-        body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
+        //TODO: Profile image and attachment switch here.
+        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n") //FIXME: Chnage here.
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
         body.append("\r\n")
