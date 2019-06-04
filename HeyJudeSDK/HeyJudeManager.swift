@@ -1048,9 +1048,14 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
         
-        body.append("--\(boundary)\r\n")
         //TODO: Profile image and attachment switch here.
-        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n") //FIXME: Chnage here.
+        
+        if let filePath = params?["profile_image"] as? String {
+            body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
+        } else {
+            body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
+        }
+        body.append("--\(boundary)\r\n")
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
         body.append("\r\n")
