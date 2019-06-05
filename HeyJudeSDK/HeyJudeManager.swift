@@ -1076,6 +1076,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
         return "application/octet-stream";
+       // return "image/png"
     }
     
     private func generateBoundaryString() -> String {
