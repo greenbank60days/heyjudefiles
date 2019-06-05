@@ -354,6 +354,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             // Updating Profile Image
             post(request: createMultiPartRequest(path: "users/profile", filePath: filePath, params: params)) { (success, data, error) in
                 if let user = data?.user {
+                    print(user)
                     completion(success, user, error)
                 } else {
                     completion(false, nil, error)
@@ -1043,18 +1044,20 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         if params != nil {
             for (key, value) in params! {
                 body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                //body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
                 body.append("\(value)\r\n")
             }
         }
-        
+        print("The SDK PARA and the value is \(params)")
         //TODO: Profile image and attachment switch here.
         
-        if let filePath = params?["profile_image"] as? String {
-            body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
-        } else {
-            body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
-        }
+//        if let filePath = params?["profile_image"] as? String {
+//            body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
+//        } else {
+//            body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
+//        }
+        print("The mime and the value is \(mimetype)")
+        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
         body.append("--\(boundary)\r\n")
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
@@ -1075,8 +1078,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 return mimetype as String
             }
         }
-        return "application/octet-stream";
-       // return "image/png"
+       return "application/octet-stream";
+        //return "image/png"
     }
     
     private func generateBoundaryString() -> String {
