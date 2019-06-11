@@ -65,7 +65,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         //print("Failed to find user's location: \(error.localizedDescription)")
     }
     
-    
     // MARK: SocketIO
     
     private func initSocket() {
@@ -132,7 +131,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    
     // MARK: - Bind to Chat Status
     open func BindToChatStatus(completion: @escaping (_ status: String) -> ()) {
         
@@ -155,7 +153,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
         
     }
-    
     
     // MARK: - Bind to Chat
     open func BindToChat(completion: @escaping (_ message: Message) -> ()) {
@@ -224,7 +221,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         completion(false, error)
         
     }
-
+    
     // MARK: - Sign In
     open func SignIn(username: String, password: String, pushToken: String?, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         var params = ["program": self.program]
@@ -347,43 +344,24 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     // MARK: Update Profile
     open func UpdateProfile(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
-        //createMultiPartRequestForProfilePicture
-//        if let filePath = params["profile_image"] as? String {
-//            // Updating Profile Image
-//            post(request: createMultiPartRequest(path: "users/profile", filePath: filePath, params: params)) { (success, data, error) in
-//                if let user = data?.user {
-//                    print(user)
-//                    completion(success, user, error)
-//                } else {
-//                    completion(false, nil, error)
-//                }
-//            }
-//        } else {
-            // Updating Profile
-    
-        
-            post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
-                if let filePath = params["profile_image"] as? String {
-                    
-                    print("The filePath and the value is \(filePath)")
-                    
-                    self.post(request: self.createMultiPartRequestForProfilePicture(path: "users/profile", filePath: filePath), completion: { (success, data, error) in
-                        if let user = data?.user {
-                            completion(success, user, error)
-                        } else {
-                            completion(false, nil, error)
-                        }
-                    })
-                } else {
+        post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+            // If a profile photo is attached. We upload that attachment.
+            if let filePath = params["profile_image"] as? String {
+                self.post(request: self.createMultiPartRequestForProfilePicture(path: "users/profile", filePath: filePath), completion: { (success, data, error) in
                     if let user = data?.user {
                         completion(success, user, error)
                     } else {
                         completion(false, nil, error)
                     }
+                })
+            } else {
+                if let user = data?.user {
+                    completion(success, user, error)
+                } else {
+                    completion(false, nil, error)
                 }
-             
             }
-       // }
+        }
     }
     
     // MARK: Skip Roadblock
@@ -469,6 +447,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Create Task
     open func CreateTask(title: String, createDefaultMessage: Bool, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
         let lat = self.currentLocation?.coordinate.latitude
@@ -492,6 +471,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Message Task
     open func MessageTask(id: Int, params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/message", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -502,6 +482,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Rate Task
     open func RateTask(id: Int, params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         post(request: createPostRequest(path: "tasks/" + String(id) + "/rate", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
@@ -512,6 +493,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Get Task Rating
     open func TaskRating(id: Int, unixTimeStamp: String, completion: @escaping (_ success: Bool, _ rating: Int?, _ error: HeyJudeError?) -> ()) {
         let params = ["unix_timestamp": unixTimeStamp]
@@ -535,6 +517,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Download
     open func DownloadAttachment(id: Int, completion: @escaping (_ success: Bool, _ object: AnyObject?, _ error: HeyJudeError?) -> ()) {
         download(request: createDownloadRequest(path: "attachments/download/" + String(id))) { (success, data, error) in
@@ -545,6 +528,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: - Detail
     open func AttachmentDetail(id: Int, completion: @escaping (_ success: Bool, _ object: Attachment?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "attachments/detail/" + String(id))) { (success, data, error) in
@@ -645,7 +629,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    
     
     // MARK: - History
     open func PaymentHistory(completion: @escaping (_ success: Bool, _ object: [Payment]?, _ error: HeyJudeError?) -> ()) {
@@ -753,7 +736,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-    
+        
         let networkInfo = CTTelephonyNetworkInfo()
         let carrier = networkInfo.subscriberCellularProvider
         
@@ -814,7 +797,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                     completion(success, error)
                 }
             }
-       }
+        }
         
     }
     
@@ -859,8 +842,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     //MARK: Convenience Methods
-    
-    
     private func host() -> String! {
         switch self.environment {
         case 0: return "https://agent.heyjudeapp.com/api/v1/"
@@ -1055,19 +1036,18 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         let data = try! Foundation.Data(contentsOf: url)
         let mimetype = mimeType(for: path)
         
-        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
+        if params != nil {
+            for (key, value) in params! {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.append("\(value)\r\n")
+            }
+        }
+        
         body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
-        
-        
-        let bcf = ByteCountFormatter()
-        bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
-        bcf.countStyle = .file
-        let string = bcf.string(fromByteCount: Int64(data.count))
-        print("formatted result: \(string)")
-        
-        
         body.append("\r\n")
         body.append("--\(boundary)--\r\n")
         request.httpBody = body
@@ -1099,10 +1079,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 body.append("\(value)\r\n")
             }
         }
-
-        body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
-        //body.append("Content-Disposition: form-data; name=\"profile_Image\"; filename=\"\(filename)\"\r\n")
+        
         body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
         body.append("\r\n")
@@ -1122,15 +1101,14 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 return mimetype as String
             }
         }
-       return "application/octet-stream";
-       // return "image/jpeg"
-
+        return "application/octet-stream";
+        // return "image/jpeg"
+        
     }
     
     private func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().uuidString)"
     }
-    
     
     private func dataTask(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ data: Data?, _ error: HeyJudeError?) -> ()) {
         request.httpMethod = method
@@ -1177,7 +1155,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }.resume();
     }
     
-    
     private func tokenizeCardTask(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
         request.httpMethod = method
         
@@ -1212,7 +1189,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
             }.resume();
     }
-    
     
     private func fileTask(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ data: AnyObject?, _ error: HeyJudeError?) -> ()) {
         request.httpMethod = method
