@@ -364,7 +364,10 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
             post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
                 if let filePath = params["profile_image"] as? String {
-                    self.post(request: self.createMultiPartRequestForProfilePicture(path: "users/profile", filePath: filePath, params: params), completion: { (success, data, error) in
+                    
+                    print("The filePath and the value is \(filePath)")
+                    
+                    self.post(request: self.createMultiPartRequestForProfilePicture(path: "users/profile", filePath: filePath), completion: { (success, data, error) in
                         if let user = data?.user {
                             completion(success, user, error)
                         } else {
