@@ -224,9 +224,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         completion(false, error)
         
     }
-    
-    
-    
+
     // MARK: - Sign In
     open func SignIn(username: String, password: String, pushToken: String?, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         var params = ["program": self.program]
@@ -249,7 +247,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-    
     
     // MARK: - Verify Phone
     open func VerifyPhone(mobile: String, type: String, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
@@ -347,30 +344,45 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
     }
+    
     // MARK: Update Profile
     open func UpdateProfile(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
-        
-        if let filePath = params["profile_image"] as? String {
-            // Updating Profile Image
-            post(request: createMultiPartRequest(path: "users/profile", filePath: filePath, params: params)) { (success, data, error) in
-                if let user = data?.user {
-                    print(user)
-                    completion(success, user, error)
-                } else {
-                    completion(false, nil, error)
-                }
-            }
-        } else {
+        //createMultiPartRequestForProfilePicture
+//        if let filePath = params["profile_image"] as? String {
+//            // Updating Profile Image
+//            post(request: createMultiPartRequest(path: "users/profile", filePath: filePath, params: params)) { (success, data, error) in
+//                if let user = data?.user {
+//                    print(user)
+//                    completion(success, user, error)
+//                } else {
+//                    completion(false, nil, error)
+//                }
+//            }
+//        } else {
             // Updating Profile
+    
+        
             post(request: createPostRequest(path: "users/profile", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
-                if let user = data?.user {
-                    completion(success, user, error)
+                if let filePath = params["profile_image"] as? String {
+                    self.post(request: self.createMultiPartRequestForProfilePicture(path: "users/profile", filePath: filePath, params: params), completion: { (success, data, error) in
+                        if let user = data?.user {
+                            completion(success, user, error)
+                        } else {
+                            completion(false, nil, error)
+                        }
+                    })
                 } else {
-                    completion(false, nil, error)
+                    if let user = data?.user {
+                        completion(success, user, error)
+                    } else {
+                        completion(false, nil, error)
+                    }
                 }
+             
             }
-        }
+       // }
     }
+    
     // MARK: Skip Roadblock
     open func SkipRoadblock(roadblock: String, completion: @escaping (_ success: Bool, _ object: User?, _ error: HeyJudeError?) -> ()) {
         let params = ["roadblock": roadblock]
@@ -1001,7 +1013,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
     }
     
-    
     private func createMapRequest(url: String) -> NSMutableURLRequest {
         if url.hasPrefix("https://agent.heyjudeapp.com/") {
             var path = url.replacingOccurrences(of: "https://agent.heyjudeapp.com/map?", with: "")
@@ -1021,6 +1032,43 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         let request = NSMutableURLRequest(url: NSURL(string: self.host())! as URL)
         return request
         
+    }
+    
+    private func createMultiPartRequestForProfilePicture(path: String, filePath: String, params: Dictionary<String, AnyObject>? = nil) -> NSMutableURLRequest {
+        
+        var body = Foundation.Data()
+        let boundary = self.generateBoundaryString()
+        let urlString = self.host() + path
+        let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        request.addValue(self.apiKey, forHTTPHeaderField: "x-api-key")
+        if (self.token != "") {
+            request.addValue("Bearer " + self.token, forHTTPHeaderField: "Authorization")
+        }
+        
+        let url = URL(fileURLWithPath: filePath)
+        let filename = url.lastPathComponent
+        let data = try! Foundation.Data(contentsOf: url)
+        let mimetype = mimeType(for: path)
+        
+        body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Type: \(mimetype)\r\n\r\n")
+        body.append(data)
+        
+        
+        let bcf = ByteCountFormatter()
+        bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+        bcf.countStyle = .file
+        let string = bcf.string(fromByteCount: Int64(data.count))
+        print("formatted result: \(string)")
+        
+        
+        body.append("\r\n")
+        body.append("--\(boundary)--\r\n")
+        request.httpBody = body
+        return request
     }
     
     private func createMultiPartRequest(path: String, filePath: String, params: Dictionary<String, AnyObject>? = nil) -> NSMutableURLRequest {
@@ -1048,17 +1096,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 body.append("\(value)\r\n")
             }
         }
-        print("The SDK PARA and the value is \(params)")
-        //TODO: Profile image and attachment switch here.
-        
-        if let filePath = params?["profile_image"] as? String {
-            body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
-        } else {
-            body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
-        }
-        print("The mime and the value is \(mimetype)")
-        //body.append("Content-Disposition: form-data; name=\"profile_image\"; filename=\"\(filename)\"\r\n")
-        
+
+        body.append("Content-Disposition: form-data; name=\"attachment\"; filename=\"\(filename)\"\r\n")
+        //body.append("Content-Disposition: form-data; name=\"profile_Image\"; filename=\"\(filename)\"\r\n")
         body.append("--\(boundary)\r\n")
         body.append("Content-Type: \(mimetype)\r\n\r\n")
         body.append(data)
@@ -1080,6 +1120,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
         }
        return "application/octet-stream";
+       // return "image/jpeg"
 
     }
     
