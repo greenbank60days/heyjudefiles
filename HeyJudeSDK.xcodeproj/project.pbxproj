@@ -33,6 +33,8 @@
 		B0F310E522C0AF1C00D16E8F /* PaymentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */; };
 		B0F310E722C0C29A00D16E8F /* StripeReponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310E622C0C29A00D16E8F /* StripeReponse.swift */; };
 		B0F310E922C0C43800D16E8F /* StripeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310E822C0C43800D16E8F /* StripeCard.swift */; };
+		B0F310ED22C0E78D00D16E8F /* StripeErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310EC22C0E78D00D16E8F /* StripeErrorResponse.swift */; };
+		B0F310EF22C0EB0E00D16E8F /* StripeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310EE22C0EB0E00D16E8F /* StripeError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +68,8 @@
 		B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
 		B0F310E622C0C29A00D16E8F /* StripeReponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeReponse.swift; sourceTree = "<group>"; };
 		B0F310E822C0C43800D16E8F /* StripeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeCard.swift; sourceTree = "<group>"; };
+		B0F310EC22C0E78D00D16E8F /* StripeErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeErrorResponse.swift; sourceTree = "<group>"; };
+		B0F310EE22C0EB0E00D16E8F /* StripeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,8 @@
 				91D59C36214B4E3400FFD265 /* PeachResponse.swift */,
 				91D59C38214B4E4B00FFD265 /* PeachResult.swift */,
 				B0F310E622C0C29A00D16E8F /* StripeReponse.swift */,
+				B0F310EC22C0E78D00D16E8F /* StripeErrorResponse.swift */,
+				B0F310EE22C0EB0E00D16E8F /* StripeError.swift */,
 				B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */,
 			);
 			path = Models;
@@ -259,6 +265,7 @@
 			files = (
 				91036B892105A53700E1741A /* Response.swift in Sources */,
 				91036B932105A53700E1741A /* SubscriptionOption.swift in Sources */,
+				B0F310ED22C0E78D00D16E8F /* StripeErrorResponse.swift in Sources */,
 				91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */,
 				91D59C37214B4E3400FFD265 /* PeachResponse.swift in Sources */,
 				91D59C35214B4E0F00FFD265 /* Card.swift in Sources */,
@@ -271,6 +278,7 @@
 				91036B8C2105A53700E1741A /* ResponseData.swift in Sources */,
 				B0F310E922C0C43800D16E8F /* StripeCard.swift in Sources */,
 				91036B922105A53700E1741A /* SubscriptionStatus.swift in Sources */,
+				B0F310EF22C0EB0E00D16E8F /* StripeError.swift in Sources */,
 				91036B8A2105A53700E1741A /* PaymentRequest.swift in Sources */,
 				91036B862105A53700E1741A /* Message.swift in Sources */,
 				91036B872105A53700E1741A /* HeyJudeError.swift in Sources */,

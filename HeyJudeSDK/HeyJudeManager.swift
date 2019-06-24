@@ -1297,8 +1297,16 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                     completion(true, stripeResponse, nil)
                 } else {
                     //TODO: Wayne sort his out
-                    //let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [(stripeResponse.result?.message)!], requestError: error, response: response)
-                    completion(false, nil, nil)
+                    
+                    guard let stripeErrorResponse = try? JSONDecoder().decode(StripeErrorResponse.self, from: data) else {
+                        let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
+                        completion(false, nil, error)
+                        return
+                    }
+                    
+                    guard let errorMessage = stripeErrorResponse.error?.message else { return }
+                    let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [errorMessage], requestError: error, response: response)
+                    completion(false, nil, error)
                 }
                 
             } else {

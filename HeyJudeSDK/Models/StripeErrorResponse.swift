@@ -1,5 +1,5 @@
 //
-//  StripeReponse.swift
+//  StripeError.swift
 //  HeyJudeSDK
 //
 //  Created by Wayne Eldridge on 2019/06/24.
@@ -8,14 +8,11 @@
 
 import Foundation
 
-public class StripeResponse: NSObject, Decodable {
-    public var id: String?
-    public var card: StripeCard?
+public class StripeErrorResponse: NSObject, Decodable {
+    public var error: StripeError?
     
     enum CodingKeys: String, CodingKey {
-        case id
-        case card
+        case error
     }
 }
-
 
