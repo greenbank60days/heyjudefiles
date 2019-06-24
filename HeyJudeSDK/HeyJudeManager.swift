@@ -555,17 +555,17 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     // MARK: Add Method
     public func AddPaymentMethod(paymentProvider: PaymentProvider, cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String, nickname: String, isDefault: Bool, completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
-    
+        
         switch paymentProvider {
         case .stripe:
             cardPostStripe(request: createTokenizeCardRequestStripe(cardNumber: cardNumber, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, stripeResponse, error) in
                 if (success) {
                     guard let id = stripeResponse?.id,
-                    let lastFourDigits = stripeResponse?.card?.lastFourDigits,
-                    let expiryMonth = stripeResponse?.card?.expiryMonth,
-                    let expiryYear = stripeResponse?.card?.expiryYear,
-                    let brand = stripeResponse?.card?.brand?.lowercased() else {
-                        return
+                        let lastFourDigits = stripeResponse?.card?.lastFourDigits,
+                        let expiryMonth = stripeResponse?.card?.expiryMonth,
+                        let expiryYear = stripeResponse?.card?.expiryYear,
+                        let brand = stripeResponse?.card?.brand?.lowercased() else {
+                            return
                     }
                     let params = ["provider": "stripe",
                                   "token": id,
@@ -940,7 +940,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         let urlString = "https://api.stripe.com/v1/tokens"//(self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
         let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
         let stripeToken = (self.environment == 0 ? "pk_live_LLKZumiLrpElnr4bS9pIZT9U" : "sk_test_3QmlWthzgsPiOxKaWhEOLaz1")
-
+        
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer " + stripeToken, forHTTPHeaderField: "Authorization")
         
@@ -1261,7 +1261,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }
             
             if let data = data {
-                
                 guard let stripeResponse = try? JSONDecoder().decode(StripeResponse.self, from: data) else {
                     let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
                     completion(false, nil, error)
@@ -1276,7 +1275,6 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                         completion(false, nil, error)
                         return
                     }
-                    
                     guard let errorMessage = stripeErrorResponse.error?.message else { return }
                     let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [errorMessage], requestError: error, response: response)
                     completion(false, nil, error)
