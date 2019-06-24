@@ -9,11 +9,12 @@
 import Foundation
 
 public class StripeCard: NSObject, Decodable {
-    public var last4Digits: String?
+    public var lastFourDigits, brand: String?
     public var expiryMonth, expiryYear: Int?
     
     enum CodingKeys: String, CodingKey {
-        case last4Digits = "last4"
+        case brand
+        case lastFourDigits = "last4"
         case expiryMonth = "exp_month"
         case expiryYear = "exp_year"
     }

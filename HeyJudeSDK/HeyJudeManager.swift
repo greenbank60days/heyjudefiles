@@ -559,24 +559,27 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
         switch paymentProvider {
         case .stripe:
-            cardPostStripe(request: createTokenizeCardRequestStripe(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, stripeResponse, error) in
+            cardPostStripe(request: createTokenizeCardRequestStripe(cardNumber: cardNumber, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, stripeResponse, error) in
                 if (success) {
                     
 
                     guard let id = stripeResponse?.id,
-                    let lastFourDigits = stripeResponse?.card?.last4Digits,
+                    let lastFourDigits = stripeResponse?.card?.lastFourDigits,
                     let expiryMonth = stripeResponse?.card?.expiryMonth,
-                    let expiryYear = stripeResponse?.card?.expiryYear else {
+                    let expiryYear = stripeResponse?.card?.expiryYear,
+                    let brand = stripeResponse?.card?.brand?.lowercased() else {
                         return
                     }
                     
                     let params = ["provider": "stripe",
                                   "token": id,
                                   "last_four_digits": lastFourDigits,
-                                  "expiry_month": expiryMonth,
+                                  "expiry_month": String(format: "%02d", expiryMonth),
                                   "expiry_year": expiryYear,
+                                  "brand": brand,
                                   //TODO: Wayne check card holder //"card_holder": stripeResponse!.card!.holder!,
                                   //TODO: Wayne check bin //"bin": stripeResponse!.card!.bin!,
+                                "card_holder": holder,
                                   "card_nickname": nickname,
                                   "default": isDefault] as [String : Any]
                     
@@ -949,11 +952,11 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     // MARK: - Create Tokenized Request Stripe
-    private func createTokenizeCardRequestStripe(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
+    private func createTokenizeCardRequestStripe(cardNumber: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
         
         let urlString = "https://api.stripe.com/v1/tokens"//(self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
         let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
-        let stripeToken = (self.environment == 0 ? "sk_test_3QmlWthzgsPiOxKaWhEOLaz1" : "pk_live_LLKZumiLrpElnr4bS9pIZT9U")
+        let stripeToken = (self.environment == 0 ? "pk_live_LLKZumiLrpElnr4bS9pIZT9U" : "sk_test_3QmlWthzgsPiOxKaWhEOLaz1")
         
         print(stripeToken)
         print(self.environment)
@@ -967,6 +970,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             "card[exp_year]": expiryYear,
             "card[cvc]": cvv,
         ]
+        
+        print(bodyParameters)
         
         let bodyString = bodyParameters.queryParameters
         request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
