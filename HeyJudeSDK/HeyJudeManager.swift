@@ -554,35 +554,76 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     // MARK: - Add Method
-    open func AddPaymentMethod(provider: String, cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String, nickname: String, isDefault: Bool , completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
+    public func AddPaymentMethod(paymentProvider: PaymentProvider, cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String, nickname: String, isDefault: Bool, completion: @escaping (_ success: Bool, _ object: [PaymentMethod]?, _ error: HeyJudeError?) -> ()) {
         
-        cardPost(request: createTokenizeCardRequest(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, peachResponse, error) in
-            if (success) {
-                
-                let params = ["provider": "peach",
-                              "token": peachResponse!.id!,
-                              "last_four_digits": peachResponse!.card!.last4Digits!,
-                              "expiry_month": peachResponse!.card!.expiryMonth!,
-                              "expiry_year": peachResponse!.card!.expiryYear!,
-                              "card_holder": peachResponse!.card!.holder!,
-                              "bin": peachResponse!.card!.bin!,
-                              "card_nickname": nickname,
-                              "default": isDefault] as [String : Any]
-                
-                self.post(request: self.createPostRequest(path: "payments/methods", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
-                    if (success) {
-                        completion(success, data?.paymentMethods, error)
-                    } else {
-                        completion(success, nil, error)
+        
+        switch paymentProvider {
+        case .stripe:
+            cardPostStripe(request: createTokenizeCardRequestStripe(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, stripeResponse, error) in
+                if (success) {
+                    
+
+                    guard let id = stripeResponse?.id,
+                    let lastFourDigits = stripeResponse?.card?.last4Digits,
+                    let expiryMonth = stripeResponse?.card?.expiryMonth,
+                    let expiryYear = stripeResponse?.card?.expiryYear else {
+                        return
                     }
+                    
+                    let params = ["provider": "stripe",
+                                  "token": id,
+                                  "last_four_digits": lastFourDigits,
+                                  "expiry_month": expiryMonth,
+                                  "expiry_year": expiryYear,
+                                  //TODO: Wayne check card holder //"card_holder": stripeResponse!.card!.holder!,
+                                  //TODO: Wayne check bin //"bin": stripeResponse!.card!.bin!,
+                                  "card_nickname": nickname,
+                                  "default": isDefault] as [String : Any]
+                    
+                    print(params)
+                    
+                    self.post(request: self.createPostRequest(path: "payments/methods", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+                        if (success) {
+                            completion(success, data?.paymentMethods, error)
+                        } else {
+                            completion(success, nil, error)
+                        }
+                    }
+                    
+                } else {
+                    completion(success, nil, error)
                 }
-                
-            } else {
-                completion(success, nil, error)
             }
+        case .peach:
+            cardPostPeach(request: createTokenizeCardRequestPeach(cardNumber: cardNumber, holder: holder, expiryMonth: expiryMonth, expiryYear: expiryYear, cvv: cvv)) { (success, peachResponse, error) in
+                if (success) {
+                    
+                    let params = ["provider": "peach",
+                                  "token": peachResponse!.id!,
+                                  "last_four_digits": peachResponse!.card!.last4Digits!,
+                                  "expiry_month": peachResponse!.card!.expiryMonth!,
+                                  "expiry_year": peachResponse!.card!.expiryYear!,
+                                  "card_holder": peachResponse!.card!.holder!,
+                                  "bin": peachResponse!.card!.bin!,
+                                  "card_nickname": nickname,
+                                  "default": isDefault] as [String : Any]
+                    
+                    self.post(request: self.createPostRequest(path: "payments/methods", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+                        if (success) {
+                            completion(success, data?.paymentMethods, error)
+                        } else {
+                            completion(success, nil, error)
+                        }
+                    }
+                    
+                } else {
+                    completion(success, nil, error)
+                }
+            }
+            
+            
         }
-        
-        
+ 
     }
     
     // MARK: - Update Method
@@ -860,8 +901,14 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    private func cardPost(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
-        tokenizeCardTask(request: request, method: "POST", completion: completion)
+    // MARK: - Card Post Peach
+    private func cardPostPeach(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
+        tokenizeCardTaskPeach(request: request, method: "POST", completion: completion)
+    }
+    
+    // MARK: - Card Post Stripe
+    private func cardPostStripe(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ peachResponse: StripeResponse?, _ error: HeyJudeError?) -> ()) {
+        tokenizeCardTaskStripe(request: request, method: "POST", completion: completion)
     }
     
     private func post(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ data: Data?, _ error: HeyJudeError?) -> ()) {
@@ -876,7 +923,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         fileTask(request: request, method: "GET", completion: completion)
     }
     
-    private func createTokenizeCardRequest(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
+    // MARK: - Create Tokenized Request Peach
+    private func createTokenizeCardRequestPeach(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
         
         let urlString = (self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
         let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
@@ -892,6 +940,32 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             "card.expiryMonth": expiryMonth,
             "card.expiryYear": expiryYear,
             "card.cvv": cvv,
+        ]
+        
+        let bodyString = bodyParameters.queryParameters
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+        return request
+    }
+    
+    // MARK: - Create Tokenized Request Stripe
+    private func createTokenizeCardRequestStripe(cardNumber: String, holder: String, expiryMonth: String, expiryYear: String, cvv: String) -> NSMutableURLRequest {
+        
+        let urlString = "https://api.stripe.com/v1/tokens"//(self.environment == 0 ? "https://oppwa.com/v1/registrations" : "https://test.oppwa.com/v1/registrations")
+        let request = NSMutableURLRequest(url: NSURL(string: urlString)! as URL)
+        let stripeToken = (self.environment == 0 ? "sk_test_3QmlWthzgsPiOxKaWhEOLaz1" : "pk_live_LLKZumiLrpElnr4bS9pIZT9U")
+        
+        print(stripeToken)
+        print(self.environment)
+        
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer " + stripeToken, forHTTPHeaderField: "Authorization")
+        
+        let bodyParameters = [
+            "card[number]": cardNumber,
+            "card[exp_month]": expiryMonth,
+            "card[exp_year]": expiryYear,
+            "card[cvc]": cvv,
         ]
         
         let bodyString = bodyParameters.queryParameters
@@ -1155,7 +1229,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             }.resume();
     }
     
-    private func tokenizeCardTask(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
+    // MARK: - Tokenized Card Peach
+    private func tokenizeCardTaskPeach(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ peachResponse: PeachResponse?, _ error: HeyJudeError?) -> ()) {
         request.httpMethod = method
         
         let session = URLSession(configuration: URLSessionConfiguration.default);
@@ -1181,6 +1256,44 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 } else {
                     let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [(peachResponse.result?.message)!], requestError: error, response: response)
                     completion(false, nil, error)
+                }
+                
+            } else {
+                let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
+                completion(false, nil, error)
+            }
+            }.resume();
+    }
+    
+    
+    // MARK: - Tokenized Card Stripe
+    private func tokenizeCardTaskStripe(request: NSMutableURLRequest, method: String, completion: @escaping (_ success: Bool, _ stripeResponse: StripeResponse?, _ error: HeyJudeError?) -> ()) {
+        request.httpMethod = method
+        
+        let session = URLSession(configuration: URLSessionConfiguration.default);
+        
+        session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
+            
+            var httpResponseCode = 0
+            
+            if let response = response as? HTTPURLResponse {
+                httpResponseCode = response.statusCode
+            }
+            
+            if let data = data {
+                
+                guard let stripeResponse = try? JSONDecoder().decode(StripeResponse.self, from: data) else {
+                    let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: nil, requestError: error, response: response)
+                    completion(false, nil, error)
+                    return
+                }
+                
+                if 200...299 ~= httpResponseCode {
+                    completion(true, stripeResponse, nil)
+                } else {
+                    //TODO: Wayne sort his out
+                    //let error = HeyJudeError(httpResponseCode: httpResponseCode, apiErrors: [(stripeResponse.result?.message)!], requestError: error, response: response)
+                    completion(false, nil, nil)
                 }
                 
             } else {
