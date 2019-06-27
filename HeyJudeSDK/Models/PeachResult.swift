@@ -14,5 +14,4 @@ public class PeachResult: NSObject, Decodable {
         case code
         case message = "description"
     }
-
 }
