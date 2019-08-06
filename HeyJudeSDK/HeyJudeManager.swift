@@ -764,7 +764,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     // MARK: Analytics
     open func Analytics(pushToken: String?, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         if(self.token.isEmpty){
-            print("Exception 401 thrown.")
+            //Exception 401 thrown
             return
         }
         
