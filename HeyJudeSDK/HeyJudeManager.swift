@@ -62,7 +62,15 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        //print("Failed to find user's location: \(error.localizedDescription)")
+//        print("Failed to find user's location: \(error.localizedDescription)")
+    }
+    
+    //MARK : requestLocation is async, can't neatly add into existing methods : Detecting change of permission state and capturing the value
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if(status == .authorizedWhenInUse){
+            locationManager.requestLocation()
+        }
     }
     
     // MARK: SocketIO
