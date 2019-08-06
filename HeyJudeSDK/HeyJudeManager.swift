@@ -763,6 +763,11 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     // MARK: Analytics
     open func Analytics(pushToken: String?, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
+        if(self.token.isEmpty){
+            //Exception 401 thrown
+            return
+        }
+        
         let screenSize = UIScreen.main.bounds
         let screenWidth = screenSize.width
         let screenHeight = screenSize.height
