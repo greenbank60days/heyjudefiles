@@ -384,6 +384,17 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: Ideas
+    open func GetIdeas(completion: @escaping (_ success: Bool, _ ideas: Any?, _ error:HeyJudeError?) ->()) {
+        get(request: createGetRequest(path: "tasks/ideas")) { (success, data, error) in
+            if let ideas = data?.ideas {
+                completion(success, ideas, error)
+            } else {
+                completion(false, [], error)
+            }
+        }
+    }
+    
     // MARK: Tasks
     // MARK: - Open
     open func OpenTasks(completion: @escaping (_ success: Bool, _ object: [Task]?, _ error: HeyJudeError?) -> ()) {
