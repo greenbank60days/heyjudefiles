@@ -10,6 +10,7 @@ import Foundation
 
 public class Idea: Decodable, CustomStringConvertible {
     public var id: Int?
+    public var key: String?
     public var name: String?
     public var template: String?
     public var descriptionText: String?
@@ -19,6 +20,7 @@ public class Idea: Decodable, CustomStringConvertible {
     
     enum CodingKeys : String, CodingKey {
         case id
+        case key
         case name
         case template
         case descriptionText = "description"
@@ -28,6 +30,7 @@ public class Idea: Decodable, CustomStringConvertible {
     public var description: String {
         var description = "\n*******Idea*******\n"
         description += "id: \(self.id!)\n"
+        description += "key: \(self.key!)\n"
         description += "name: \(self.name!)\n"
         description += "description: \(self.descriptionText!)\n"
         description += "icon: \(self.icon!)\n"
