@@ -761,6 +761,17 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: - Contacts
+    open func GetContactCenters(completion: @escaping (_ success: Bool, _ object:[ContactCenter]?, _ error: HeyJudeError?) -> ()) {
+        get(request: createGetRequest(path: "contacts")) { (success, data, error) in
+            if let contactCenters = data?.contactCenters {
+                completion(success, contactCenters, error)
+            } else {
+                completion(false, [], error)
+            }
+        }
+    }
+    
     // MARK: Analytics
     open func Analytics(pushToken: String?, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         if(self.token.isEmpty){
