@@ -19,6 +19,7 @@ public class Data: NSObject, Decodable {
     public var attachment: Attachment?
     public var featuredImage: FeaturedImage?
     public var countries: [Country]?
+    public var contactCenters: [ContactCenter]?
     public var taskRating: Int?
 
     enum CodingKeys : String, CodingKey {
@@ -33,6 +34,7 @@ public class Data: NSObject, Decodable {
         case attachment
         case featuredImage = "featured_image"
         case countries
+        case contactCenters = "contact_centers"
         case taskRating = "task_rating"
     }
 
