@@ -763,7 +763,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     // MARK: - Contacts
     open func GetContactCenters(completion: @escaping (_ success: Bool, _ object:[ContactCenter]?, _ error: HeyJudeError?) -> ()) {
-        get(request: createGetRequest(path: "contacts")) { (success, data, error) in
+        get(request: createGetRequest(path: "contact-centers")) { (success, data, error) in
             if let contactCenters = data?.contactCenters {
                 completion(success, contactCenters, error)
             } else {

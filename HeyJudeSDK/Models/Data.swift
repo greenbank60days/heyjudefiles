@@ -34,7 +34,7 @@ public class Data: NSObject, Decodable {
         case attachment
         case featuredImage = "featured_image"
         case countries
-        case contactCenters
+        case contactCenters = "contact_centers"
         case taskRating = "task_rating"
     }
 
