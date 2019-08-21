@@ -384,6 +384,17 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: Ideas
+    open func GetIdeas(completion: @escaping (_ success: Bool, _ ideas: [Idea]?, _ error:HeyJudeError?) ->()) {
+        get(request: createGetRequest(path: "ideas")) { (success, data, error) in
+            if let ideas = data?.ideas {
+                completion(success, ideas, error)
+            } else {
+                completion(false, [], error)
+            }
+        }
+    }
+    
     // MARK: Tasks
     // MARK: - Open
     open func OpenTasks(completion: @escaping (_ success: Bool, _ object: [Task]?, _ error: HeyJudeError?) -> ()) {
@@ -457,7 +468,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     // MARK: - Create Task
-    open func CreateTask(title: String, createDefaultMessage: Bool, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
+    open func CreateTask(title: String, createDefaultMessage: Bool, ideaId: String?, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
         let lat = self.currentLocation?.coordinate.latitude
         let lon = self.currentLocation?.coordinate.longitude
         var latString = ""
@@ -470,7 +481,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
             lonString = "\(lon ?? 0)"
         }
         
-        let params = ["title": title, "create_default_message": createDefaultMessage, "latitude": latString, "longitude": lonString] as [String : Any]
+        let ideaIdString = ideaId ?? ""
+        
+        let params = ["title": title, "create_default_message": createDefaultMessage, "ideaId": ideaIdString, "latitude": latString, "longitude": lonString] as [String : Any]
         post(request: createPostRequest(path: "tasks/create", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
                 completion(success, data?.task, error)
