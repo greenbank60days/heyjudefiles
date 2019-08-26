@@ -13,11 +13,8 @@ public class SubscriptionOption: Decodable, CustomStringConvertible {
     public var subscriptionOptionDescription: String?
     public var currency: String?
     public var price: String?
-    public var amount: Int?
-    public var unit: String?
     public var available: Bool?
     public var type: String?
-    public var isTrial: Bool?
     public var isPro: Bool?
     public var proHours: String?
     public var duration: String?
@@ -29,11 +26,8 @@ public class SubscriptionOption: Decodable, CustomStringConvertible {
         case subscriptionOptionDescription = "description"
         case currency
         case price
-        case amount
-        case unit
         case available
         case type
-        case isTrial = "is_trial"
         case isPro = "is_pro"
         case proHours = "pro_hours"
         case duration
@@ -46,11 +40,8 @@ public class SubscriptionOption: Decodable, CustomStringConvertible {
         description += "description: \(self.subscriptionOptionDescription!)\n"
         description += "currency: \(self.currency!)\n"
         description += "price: \(self.price!)\n"
-        description += "amount: \(self.amount!)\n"
-        description += "unit: \(self.unit!)\n"
         description += "available: \(self.available!)\n"
         description += "type: \(self.type!)\n"
-        description += "isTrial: \(self.isTrial!)\n"
         description += "isPro: \(self.isPro!)\n"
         description += "proHours: \(self.proHours!)\n"
         description += "duration: \(self.duration!)\n"
