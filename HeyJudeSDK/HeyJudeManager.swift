@@ -384,8 +384,19 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: Reasons
+    open func GetReasons(completion: @escaping (_ success: Bool, _ object: [Reason]?, _ error:HeyJudeError?) ->()) {
+        get(request: createGetRequest(path: "rating-reasons")) { (success, data, error) in
+            if let reasons = data?.reasons {
+                completion(success, reasons, error)
+            } else {
+                completion(false, [], error)
+            }
+        }
+    }
+    
     // MARK: Ideas
-    open func GetIdeas(completion: @escaping (_ success: Bool, _ ideas: [Idea]?, _ error:HeyJudeError?) ->()) {
+    open func GetIdeas(completion: @escaping (_ success: Bool, _ object: [Idea]?, _ error:HeyJudeError?) ->()) {
         get(request: createGetRequest(path: "ideas")) { (success, data, error) in
             if let ideas = data?.ideas {
                 completion(success, ideas, error)

@@ -31,6 +31,7 @@
 		91D59C39214B4E4B00FFD265 /* PeachResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D59C38214B4E4B00FFD265 /* PeachResult.swift */; };
 		91F9ADCE21017815001AA3D8 /* HeyJudeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CBD5D82101675E0056C7CA /* HeyJudeManager.swift */; };
 		A1CF2FD42306B29B00F1AA94 /* ContactCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CF2FD32306B29B00F1AA94 /* ContactCenter.swift */; };
+		A1D499C123155D6800816165 /* Reason.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D499C023155D6800816165 /* Reason.swift */; };
 		A1DD016823016B4600501535 /* Idea.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DD016723016B4600501535 /* Idea.swift */; };
 		B0F310E522C0AF1C00D16E8F /* PaymentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */; };
 		B0F310E722C0C29A00D16E8F /* StripeReponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F310E622C0C29A00D16E8F /* StripeReponse.swift */; };
@@ -68,6 +69,7 @@
 		91D59C36214B4E3400FFD265 /* PeachResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResponse.swift; sourceTree = "<group>"; };
 		91D59C38214B4E4B00FFD265 /* PeachResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeachResult.swift; sourceTree = "<group>"; };
 		A1CF2FD32306B29B00F1AA94 /* ContactCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCenter.swift; sourceTree = "<group>"; };
+		A1D499C023155D6800816165 /* Reason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reason.swift; sourceTree = "<group>"; };
 		A1DD016723016B4600501535 /* Idea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Idea.swift; sourceTree = "<group>"; };
 		B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
 		B0F310E622C0C29A00D16E8F /* StripeReponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeReponse.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				B0F310EE22C0EB0E00D16E8F /* StripeError.swift */,
 				B0F310E422C0AF1C00D16E8F /* PaymentProvider.swift */,
 				A1DD016723016B4600501535 /* Idea.swift */,
+				A1D499C023155D6800816165 /* Reason.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				91036B8A2105A53700E1741A /* PaymentRequest.swift in Sources */,
 				91036B862105A53700E1741A /* Message.swift in Sources */,
 				91036B872105A53700E1741A /* HeyJudeError.swift in Sources */,
+				A1D499C123155D6800816165 /* Reason.swift in Sources */,
 				91036B882105A53700E1741A /* FeaturedImage.swift in Sources */,
 				91036B842105A53700E1741A /* Country.swift in Sources */,
 				B0F310E722C0C29A00D16E8F /* StripeReponse.swift in Sources */,
