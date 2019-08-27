@@ -840,6 +840,8 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
         let pushToken = pushToken ?? ""
         
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? ""
+        
         DispatchQueue.main.async {
             let params = [
                 "device_identifier": UIDevice.current.name,
@@ -849,7 +851,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 "device_os_version": UIDevice.current.systemVersion,
                 "device_carrier": carrierName,
                 "device_screen_size": "\(screenWidth)x\(screenHeight)",
-                "app_version": "3.0.0",
+                "app_version": appVersion,//"3.0.0",
                 "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
                 "app_location_enabled": locationEnabled,
                 "latitude": latString,
