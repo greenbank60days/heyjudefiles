@@ -9,6 +9,7 @@
 public class Data: NSObject, Decodable {
 
     public var user: User?
+    public var reasons: [Reason]?
     public var ideas: [Idea]?
     public var tasks: [Task]?
     public var paymentMethods: [PaymentMethod]?
@@ -25,6 +26,7 @@ public class Data: NSObject, Decodable {
 
     enum CodingKeys : String, CodingKey {
         case user
+        case reasons
         case ideas
         case tasks
         case paymentMethods = "payment_methods"
