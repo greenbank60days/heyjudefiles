@@ -414,6 +414,19 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     }
     
     // MARK: Tasks
+    // MARK: - Task Un/Read Status
+    open func markTaskAsUnread(id: Int, completion: @escaping () -> ()) {
+        post(request: createPostRequest(path: "tasks/" + String(id) + "/unread")) {  (success, data, error) in
+            completion()
+        }
+    }
+    
+    open func markTaskAsRead(id: Int, completion: @escaping () -> ()) {
+        post(request: createPostRequest(path: "tasks/" + String(id) + "/read")) {  (success, data, error) in
+            completion()
+        }
+    }
+    
     // MARK: - Open
     open func OpenTasks(completion: @escaping (_ success: Bool, _ object: [Task]?, _ error: HeyJudeError?) -> ()) {
         get(request: createGetRequest(path: "tasks/open")) { (success, data, error) in
