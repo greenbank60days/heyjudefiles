@@ -299,6 +299,13 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: - Report a Problem
+    open func ReportAProblem(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
+        post(request: createPostRequest(path: "report-a-problem", params: params)) { (success, _, error) in
+                completion(success, error)
+        }
+    }
+    
     // MARK: - Refresh
     open func Refresh(completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
         get(request: createPostRequest(path: "auth/refresh")) { (success, data, error) in
