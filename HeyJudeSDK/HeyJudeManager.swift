@@ -478,7 +478,7 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    // MARK: - Create Task
+    // MARK: - Create Task with Idea
     open func CreateTask(title: String, createDefaultMessage: Bool, ideaId: String?, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
         let lat = self.currentLocation?.coordinate.latitude
         let lon = self.currentLocation?.coordinate.longitude
@@ -495,6 +495,31 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         let ideaIdString = ideaId ?? ""
         
         let params = ["title": title, "create_default_message": createDefaultMessage, "ideaId": ideaIdString, "latitude": latString, "longitude": lonString] as [String : Any]
+        post(request: createPostRequest(path: "tasks/create", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
+            if (success) {
+                completion(success, data?.task, error)
+            } else {
+                completion(success, nil, error)
+            }
+        }
+    }
+    
+    
+    // MARK: - Create Task
+    open func CreateTask(title: String, createDefaultMessage: Bool, completion: @escaping (_ success: Bool, _ object: Task?, _ error: HeyJudeError?) -> ()) {
+        let lat = self.currentLocation?.coordinate.latitude
+        let lon = self.currentLocation?.coordinate.longitude
+        var latString = ""
+        var lonString = ""
+        
+        if lat != nil {
+            latString = "\(lat ?? 0)"
+        }
+        if lon != nil {
+            lonString = "\(lon ?? 0)"
+        }
+        
+        let params = ["title": title, "create_default_message": createDefaultMessage, "latitude": latString, "longitude": lonString] as [String : Any]
         post(request: createPostRequest(path: "tasks/create", params: params as Dictionary<String, AnyObject>?)) { (success, data, error) in
             if (success) {
                 completion(success, data?.task, error)
@@ -851,7 +876,9 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
         
         let pushToken = pushToken ?? ""
         
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? ""
+        let appVersion = (self.program == "heyjude")
+                            ? Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "3.0.1"
+                            : "3.0.1"
         
         DispatchQueue.main.async {
             let params = [
