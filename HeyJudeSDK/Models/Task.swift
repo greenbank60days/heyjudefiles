@@ -13,6 +13,7 @@ public class Task: Decodable, CustomStringConvertible {
     public var createdAt: String?
     public var status: String?
     public var open: Bool?
+    public var unread: Bool?
     public var messages: [Message]?
 
     public init () {}
@@ -23,6 +24,7 @@ public class Task: Decodable, CustomStringConvertible {
         case createdAt = "created_at"
         case status
         case open
+        case unread
         case messages
     }
 
@@ -33,6 +35,7 @@ public class Task: Decodable, CustomStringConvertible {
         description += "createdAt: \(self.createdAt!)\n"
         description += "status: \(self.status!)\n"
         description += "open: \(self.open!)\n"
+        description += "unread: \(self.unread!)\n"
         if self.messages != nil {
             description += "messages: \n"
             for message in self.messages! {
