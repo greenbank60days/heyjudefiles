@@ -301,7 +301,45 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
     
     // MARK: - Report a Problem
     open func ReportAProblem(params: Dictionary<String, AnyObject>, completion: @escaping (_ success: Bool, _ error: HeyJudeError?) -> ()) {
-        post(request: createPostRequest(path: "report-a-problem", params: params)) { (success, _, error) in
+        let appVersion = (self.program == "heyjude")
+            ? Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "3.0.1"
+            : "3.0.1"
+        
+        let screenSize = UIScreen.main.bounds
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        
+        // Get carrier name
+        let networkInfo = CTTelephonyNetworkInfo()
+        let carrier = networkInfo.subscriberCellularProvider
+        let carrierName = carrier?.carrierName ?? ""
+        
+        var locationEnabled = false
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedWhenInUse:
+           locationEnabled = true
+           break
+        case .authorizedAlways:
+           locationEnabled = true
+           break
+        default:
+           locationEnabled = false
+           break
+        }
+       
+        let analyticParams = [
+            "app_version": appVersion,//"3.0.0",
+            "app_push_enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
+            "app_location_enabled": locationEnabled,
+            "device_os": "iOS",
+            "device_os_version": UIDevice.current.systemVersion,
+            "device_carrier": carrierName,
+            "device_screen_size": "\(screenWidth)x\(screenHeight)",
+        ] as Dictionary<String, AnyObject>
+        
+        let joinedParams = analyticParams.merging(params) { (_, new) in new }
+        
+        post(request: createPostRequest(path: "report-a-problem", params: joinedParams)) { (success, _, error) in
                 completion(success, error)
         }
     }
@@ -967,6 +1005,11 @@ open class HeyJudeManager: NSObject, CLLocationManagerDelegate {
                 completion(success, nil, error)
             }
         }
+    }
+    
+    // MARK: - Licences
+    open func GetLicensesURL() -> URLRequest? {
+       return createGetRequest(path: "licenses?device_os=iOS&program=\(self.program)") as URLRequest
     }
     
     //MARK: Convenience Methods
